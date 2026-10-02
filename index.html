@@ -1,0 +1,2888 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sangam — Centralized College Events Hub | All Clubs & Committees</title>
+<link rel="icon" type="image/png" href="assets/sangam-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Color Palette per requirements */
+  --c-plum: #362F4F;
+  --c-plum-light: #4a406c;
+  --c-plum-dark: #1f1b2d;
+  --c-violet: #5B23FF;
+  --c-violet-glow: rgba(91, 35, 255, 0.4);
+  --c-blue: #008BFF;
+  --c-blue-glow: rgba(0, 139, 255, 0.35);
+  --c-lime: #E4FF30;
+  --c-lime-glow: rgba(228, 255, 48, 0.45);
+
+  /* Surfaces & text */
+  --bg-deep: #0a0812;
+  --bg-surface: #130f23;
+  --bg-card: rgba(25, 20, 39, 0.75);
+  --bg-glass: rgba(22, 18, 36, 0.72);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(91, 35, 255, 0.28);
+  --text-main: #f5f6fc;
+  --text-muted: #9aa1bc;
+  --text-dim: #6c7391;
+  --radius-card: 18px;
+  --radius-pill: 9999px;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+[hidden], [hidden="true"] {
+  display: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+}
+
+/* ---------------- Ambient Background & Mesh Grid ---------------- */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+  background-color: var(--bg-deep);
+}
+
+.ambient-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 25%, black 40%, transparent 90%);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.22;
+  will-change: transform;
+  animation: floatOrb 18s ease-in-out infinite alternate;
+}
+
+.orb-1 {
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, var(--c-violet) 0%, transparent 70%);
+  top: -120px;
+  left: 10%;
+  animation-duration: 22s;
+}
+
+.orb-2 {
+  width: 580px;
+  height: 580px;
+  background: radial-gradient(circle, var(--c-blue) 0%, transparent 70%);
+  top: 15%;
+  right: -100px;
+  animation-duration: 26s;
+  animation-delay: -6s;
+}
+
+.orb-3 {
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, var(--c-plum) 0%, transparent 70%);
+  bottom: 10%;
+  left: 5%;
+  animation-duration: 20s;
+  animation-delay: -12s;
+}
+
+.orb-4 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(228, 255, 48, 0.25) 0%, transparent 70%);
+  top: 55%;
+  right: 15%;
+  animation-duration: 24s;
+  animation-delay: -4s;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(45px, 60px) scale(1.08); }
+  100% { transform: translate(-35px, 40px) scale(0.95); }
+}
+
+/* ---------------- Layout & Header ---------------- */
+.site-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Demo Control Bar */
+.demo-strip {
+  background: linear-gradient(90deg, #1d182e 0%, var(--c-plum) 50%, #1d182e 100%);
+  border-bottom: 1px solid rgba(228, 255, 48, 0.2);
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  z-index: 60;
+  position: relative;
+}
+
+.demo-strip .tag {
+  background: var(--c-lime);
+  color: #0b0914;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.demo-accounts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.demo-accounts span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-right: 0.2rem;
+}
+
+.btn-chip {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text-main);
+  padding: 0.22rem 0.6rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-chip:hover {
+  background: var(--c-violet);
+  border-color: var(--c-violet);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-chip.lime {
+  border-color: rgba(228, 255, 48, 0.4);
+}
+.btn-chip.lime:hover {
+  background: var(--c-lime);
+  color: #0d0b14;
+}
+
+/* Floating Glass Header (weevolveit style) */
+.header-container {
+  position: sticky;
+  top: 0.8rem;
+  z-index: 50;
+  padding: 0 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.header-bar {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(91, 35, 255, 0.1);
+  border-radius: 24px;
+  padding: 0.6rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header-bar:hover {
+  border-color: rgba(91, 35, 255, 0.35);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(91, 35, 255, 0.2);
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.brand-logo-img {
+  height: 42px;
+  width: 42px;
+  border-radius: 10px;
+  object-fit: cover;
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+  box-shadow: 0 0 16px rgba(91, 35, 255, 0.4);
+  border: 1px solid rgba(228, 255, 48, 0.3);
+}
+
+.brand-link:hover .brand-logo-img {
+  transform: scale(1.08) rotate(4deg);
+  box-shadow: 0 0 22px rgba(228, 255, 48, 0.55);
+}
+
+.brand-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-weight: 800;
+  font-size: 1.18rem;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #ffffff 0%, #c4d6ff 60%, var(--c-lime) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.15;
+}
+
+.brand-subtitle {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-blue);
+  line-height: 1;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.nav-item {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-pill);
+  transition: all 0.2s ease;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.nav-item:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-item.on {
+  color: #ffffff;
+  background: rgba(91, 35, 255, 0.25);
+  border: 1px solid rgba(91, 35, 255, 0.4);
+  box-shadow: 0 0 16px rgba(91, 35, 255, 0.25);
+}
+
+.nav-item.on::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--c-lime);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* Bell button with pulse badge */
+.bell-btn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.05rem;
+}
+
+.bell-btn:hover {
+  background: rgba(91, 35, 255, 0.2);
+  border-color: var(--c-violet);
+  box-shadow: 0 0 12px var(--c-violet-glow);
+}
+
+.badge-pulse {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--c-lime);
+  color: #0b0816;
+  font-size: 0.65rem;
+  font-weight: 800;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 10px var(--c-lime-glow);
+  animation: pulseDot 2s infinite;
+}
+
+.badge-pulse[hidden] {
+  display: none !important;
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(228, 255, 48, 0.7); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(228, 255, 48, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(228, 255, 48, 0); }
+}
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(54, 47, 79, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+}
+
+.user-role-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-pill);
+}
+
+.role-student { background: rgba(0, 139, 255, 0.2); color: var(--c-blue); border: 1px solid rgba(0, 139, 255, 0.3); }
+.role-organiser { background: rgba(228, 255, 48, 0.15); color: var(--c-lime); border: 1px solid rgba(228, 255, 48, 0.3); }
+.role-admin { background: rgba(91, 35, 255, 0.25); color: #c4d6ff; border: 1px solid rgba(91, 35, 255, 0.4); }
+
+/* Main Content Area */
+main {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.25rem 5rem;
+  flex: 1;
+}
+
+/* ---------------- Hero Section (weevolveit style) ---------------- */
+.hero-section {
+  padding: 2.2rem 0 2rem;
+  position: relative;
+  text-align: center;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.hero-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(54, 47, 79, 0.5);
+  border: 1px solid rgba(228, 255, 48, 0.35);
+  box-shadow: 0 0 20px rgba(228, 255, 48, 0.15);
+  padding: 0.35rem 0.95rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-lime);
+  margin-bottom: 1.25rem;
+  animation: fadeInDown 0.8s var(--ease-spring);
+}
+
+.hero-pill-badge .sparkle {
+  color: var(--c-lime);
+  font-size: 0.9rem;
+}
+
+.hero-title {
+  font-size: clamp(2.4rem, 6.2vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  margin-bottom: 1.2rem;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #ffffff 15%, #b2c9ff 45%, var(--c-blue) 75%, var(--c-lime) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 660px;
+  margin: 0 auto 2rem;
+}
+
+.hero-stats-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem 3rem;
+  padding: 1.2rem 1.8rem;
+  background: rgba(31, 26, 45, 0.5);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  margin-top: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.stat-number.lime { color: var(--c-lime); }
+.stat-number.blue { color: var(--c-blue); }
+.stat-number.violet { color: #9f82ff; }
+
+.stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-dim);
+}
+
+/* ---------------- Filter & Search Section ---------------- */
+.controls-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 1.1rem;
+  margin: 2rem 0 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+
+@media(min-width: 768px) {
+  .filter-row {
+    grid-template-columns: 2fr 1.2fr 1.2fr;
+  }
+}
+
+.search-box-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box-wrapper .icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-dim);
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+.input-custom {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  background: rgba(10, 8, 18, 0.8);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  color: var(--text-main);
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.select-custom {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(10, 8, 18, 0.8);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  color: var(--text-main);
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+  cursor: pointer;
+}
+
+.input-custom:focus, .select-custom:focus, textarea.input-custom:focus {
+  border-color: var(--c-violet);
+  box-shadow: 0 0 0 3px rgba(91, 35, 255, 0.25), 0 0 15px rgba(91, 35, 255, 0.2);
+}
+
+.category-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+  scrollbar-width: none;
+}
+
+.category-pills::-webkit-scrollbar { display: none; }
+
+.cat-pill {
+  white-space: nowrap;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cat-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.cat-pill.active {
+  background: var(--c-lime);
+  color: #0d0b16;
+  border-color: var(--c-lime);
+  font-weight: 700;
+  box-shadow: 0 0 12px var(--c-lime-glow);
+}
+
+/* ---------------- Event Grid & WeEvolveIT Card Candle Glow ---------------- */
+.section-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.25rem;
+  padding: 0 0.25rem;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--c-blue);
+  font-family: "JetBrains Mono", monospace;
+  margin-bottom: 0.25rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.event-count-badge {
+  font-size: 0.82rem;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--text-dim);
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Card Candle Glow / Spotlight */
+.event-card, .card-candle-glow {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.4s var(--ease-spring), border-color 0.4s ease, box-shadow 0.4s ease;
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+  transform: translateZ(0);
+}
+
+.event-card::before, .card-candle-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: radial-gradient(
+    420px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(91, 35, 255, 0.45) 0%,
+    rgba(0, 139, 255, 0.3) 30%,
+    rgba(228, 255, 48, 0.15) 55%,
+    transparent 75%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-7px) scale(1.01);
+  border-color: rgba(91, 35, 255, 0.3);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 25px rgba(91, 35, 255, 0.2);
+}
+
+.event-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Poster Area */
+.card-poster {
+  aspect-ratio: 16 / 9;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 1.1rem;
+}
+
+.card-poster-bg {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.6s var(--ease-spring);
+}
+
+.event-card:hover .card-poster-bg {
+  transform: scale(1.06);
+}
+
+.card-poster-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 8, 18, 0.1) 0%, rgba(10, 8, 18, 0.9) 100%);
+}
+
+.card-poster-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.poster-club-pill {
+  background: rgba(19, 15, 35, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.category-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: var(--c-lime);
+  color: #0b0914;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 10px var(--c-lime-glow);
+}
+
+/* Card Body */
+.card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.85rem;
+}
+
+.card-date-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--c-blue);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.card-title {
+  font-size: 1.22rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #ffffff;
+  transition: color 0.2s ease;
+}
+
+.event-card:hover .card-title {
+  color: var(--c-lime);
+}
+
+.card-desc {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.card-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Progress bar for seat filling */
+.seat-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.seat-progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.seat-progress-bar {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+
+.seat-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--c-violet), var(--c-blue));
+  transition: width 0.4s ease;
+}
+
+.seat-progress-fill.filling-fast {
+  background: linear-gradient(90deg, var(--c-blue), var(--c-lime));
+}
+
+.seat-progress-fill.full {
+  background: #ff4757;
+}
+
+/* Card Action Footer with Arrow Swap */
+.card-footer-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.4rem;
+}
+
+.reg-status-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.reg-status-pill.registered {
+  color: var(--c-lime);
+}
+
+/* WeEvolveIT Arrow Swap Animation */
+.arrow-swap-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--c-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: color 0.2s ease;
+}
+
+.event-card:hover .arrow-swap-cta {
+  color: var(--c-lime);
+}
+
+.arrow-swap {
+  display: inline-flex;
+  position: relative;
+  overflow: hidden;
+  width: 14px;
+  height: 14px;
+}
+
+.arrow-swap span {
+  display: inline-block;
+  transition: transform 0.3s var(--ease-spring);
+}
+
+.arrow-swap span:first-child {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.arrow-swap span:last-child {
+  position: absolute;
+  left: -14px;
+  top: 0;
+}
+
+.event-card:hover .arrow-swap span:first-child,
+.btn-primary:hover .arrow-swap span:first-child {
+  transform: translateX(14px);
+}
+
+.event-card:hover .arrow-swap span:last-child,
+.btn-primary:hover .arrow-swap span:last-child {
+  transform: translateX(14px);
+}
+
+/* ---------------- Buttons & Inputs (weevolveit style) ---------------- */
+.btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--c-violet) 0%, #3e1cc4 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.75rem 1.4rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.25s var(--ease-spring);
+  box-shadow: 0 4px 20px var(--c-violet-glow);
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(91, 35, 255, 0.5), 0 0 15px rgba(228, 255, 48, 0.3);
+  border-color: var(--c-lime);
+  color: #ffffff;
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: 0.5s;
+}
+
+.btn-primary:hover::after {
+  left: 100%;
+}
+
+.btn-lime {
+  background: var(--c-lime);
+  color: #0b0914;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 18px var(--c-lime-glow);
+}
+
+.btn-lime:hover {
+  background: #f1ff6a;
+  color: #000;
+  box-shadow: 0 6px 24px var(--c-lime-glow);
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 0.65rem 1.1rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.3);
+  color: #fff;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.btn-link:hover {
+  color: var(--c-lime);
+}
+
+/* ---------------- Event Detail & Registration Modal ---------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 4, 12, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 100;
+  display: none !important;
+  place-items: center;
+  padding: 1.25rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.active {
+  display: grid !important;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#csv {
+  display: none !important;
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 4, 12, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 200;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+#csv.active {
+  display: grid !important;
+}
+
+.modal-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.8), 0 0 30px var(--c-violet-glow);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: scale(0.92) translateY(20px);
+  transition: transform 0.35s var(--ease-spring);
+}
+
+.modal-overlay.active .modal-box {
+  transform: scale(1) translateY(0);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.modal-banner {
+  aspect-ratio: 21 / 9;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 1.5rem;
+}
+
+.modal-content-inner {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modal-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.modal-info-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  background: rgba(54, 47, 79, 0.35);
+  border: 1px solid var(--border-subtle);
+  padding: 1rem;
+  border-radius: 14px;
+}
+
+.info-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.info-cell .lbl {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+.info-cell .val {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.info-cell .val.lime { color: var(--c-lime); }
+.info-cell .val.blue { color: var(--c-blue); }
+
+.reg-form-box {
+  background: rgba(10, 8, 18, 0.6);
+  border: 1px solid rgba(91, 35, 255, 0.25);
+  border-radius: 16px;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+@media(max-width: 550px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ---------------- Notification Bell Dropdown ---------------- */
+.panel-notifications {
+  position: absolute;
+  top: 4.8rem;
+  right: 1.25rem;
+  width: min(380px, 94vw);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+  padding: 1.25rem;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  backdrop-filter: blur(20px);
+  animation: panelSlide 0.25s var(--ease-spring);
+}
+
+.panel-notifications[hidden] {
+  display: none !important;
+}
+
+@keyframes panelSlide {
+  from { opacity: 0; transform: translateY(-10px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.notif-item {
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid var(--c-blue);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  transition: background 0.2s ease;
+}
+
+.notif-item.new {
+  background: rgba(91, 35, 255, 0.15);
+  border-left-color: var(--c-lime);
+}
+
+.notif-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.notif-body {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ---------------- Toast Notification ---------------- */
+.toast-msg {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  background: rgba(22, 17, 36, 0.95);
+  border: 1px solid var(--c-lime);
+  color: #fff;
+  padding: 0.8rem 1.6rem;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px var(--c-lime-glow);
+  z-index: 120;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s var(--ease-spring);
+}
+
+.toast-msg.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---------------- Dashboard Layouts (Organiser / Admin) ---------------- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media(min-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1.1fr 1fr;
+  }
+}
+
+.panel-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  padding: 1.6rem;
+  backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.panel-card h2 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.item-row-card {
+  background: rgba(14, 11, 23, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.item-row-card:hover {
+  border-color: rgba(91, 35, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.status-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.05em;
+}
+
+.status-approved { background: rgba(228, 255, 48, 0.15); color: var(--c-lime); border: 1px solid rgba(228, 255, 48, 0.3); }
+.status-pending { background: rgba(0, 139, 255, 0.15); color: var(--c-blue); border: 1px solid rgba(0, 139, 255, 0.3); }
+.status-rejected { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+/* Stagger Animation on load */
+.fade-up {
+  opacity: 0;
+  transform: translateY(22px);
+  animation: fadeInUp 0.7s var(--ease-spring) forwards;
+}
+
+@keyframes fadeInUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Ambient background floating orbs & mesh -->
+<div class="ambient-bg" aria-hidden="true">
+  <div class="ambient-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<div class="site-wrapper">
+  <!-- Demo quick control bar -->
+  <div class="demo-strip" id="demo">
+    <div style="display:flex;align-items:center;gap:0.6rem;">
+      <span class="tag">⚡ Sangam Hub</span>
+      <span style="color:#d8daf0">Centralized platform for All College Clubs & Committees</span>
+    </div>
+    <div class="demo-accounts">
+      <span>Switch Persona:</span>
+      <button class="btn-chip" data-act="quick" data-e="student@campus.edu" data-p="password123">👨‍🎓 Student</button>
+      <button class="btn-chip" data-act="quick" data-e="gdsc@campus.edu" data-p="password123">🏛️ Club Organiser</button>
+      <button class="btn-chip" data-act="quick" data-e="admin@campus.edu" data-p="password123">⚡ Admin</button>
+      <button class="btn-chip lime" data-act="data">📊 CSV Data</button>
+      <button class="btn-chip" data-act="reset" style="opacity:0.75">🔄 Clear All</button>
+    </div>
+  </div>
+
+  <!-- Floating Sticky Header (weevolveit style) -->
+  <div class="header-container">
+    <header class="header-bar">
+      <a class="brand-link" href="#/" id="brandLink">
+        <img class="brand-logo-img" src="assets/sangam-icon.png" alt="Sangam Emblem">
+        <div class="brand-text-block">
+          <span class="brand-title">SANGAM</span>
+          <span class="brand-subtitle">College Events Hub</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" id="nav"></nav>
+
+      <div class="nav-actions">
+        <button class="bell-btn" id="bell" aria-label="Notifications">
+          🔔
+          <span class="badge-pulse" id="bellBadge" hidden>0</span>
+        </button>
+        <div id="userBadgeSlot"></div>
+      </div>
+    </header>
+  </div>
+
+  <!-- Notification panel -->
+  <div id="panel" class="panel-notifications" hidden></div>
+
+  <!-- Main dynamic app container -->
+  <main id="app"></main>
+
+  <!-- Global Modal for Details & Registration -->
+  <div class="modal-overlay" id="eventModal" role="dialog" aria-modal="true" style="display:none;">
+    <div class="modal-box" id="modalBox">
+      <button class="modal-close-btn" id="modalClose" aria-label="Close modal">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- Floating Toast Message -->
+  <div id="toast" class="toast-msg"></div>
+
+  <!-- Data CSV Overlay -->
+  <div id="csv" style="display:none;" hidden></div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CATS = ['All', 'Workshop', 'Technical', 'Talk', 'Competition', 'Cultural', 'Sports', 'General'];
+
+const fmtDate = iso => {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+};
+const fmtTime = iso => {
+  const d = new Date(iso);
+  return d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+};
+const fmtFull = iso => `${fmtDate(iso)} · ${fmtTime(iso)}`;
+
+/* Dynamic Hues for clubs using palette tints */
+const clubHue = name => {
+  const h = [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
+  return h;
+};
+
+/* Poster generator with aesthetic gradient based on palette */
+function getPosterGradient(clubName) {
+  const h = clubHue(clubName);
+  return `linear-gradient(135deg, hsl(${h}, 70%, 25%) 0%, var(--c-plum) 50%, hsl(${(h+60)%360}, 80%, 20%) 100%)`;
+}
+
+/* ---------------- Database & Persistence (Prototype) ---------------- */
+const DBK = 'sangam-proto-v4';
+const CODES = { organiser: 'ORG-2026', admin: 'ADMIN-2026' };
+const nid = () => Math.random().toString(16).slice(2, 12).padEnd(10, '0');
+const tiso = d => new Date(d).toISOString().replace(/\.\d+Z$/, 'Z');
+const sha = async str => {
+  try {
+    if (window.crypto && window.crypto.subtle && typeof window.crypto.subtle.digest === 'function') {
+      return [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)))].map(v => v.toString(16).padStart(2, '0')).join('');
+    }
+  } catch (e) {}
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16).padStart(8, '0');
+};
+
+/* Rich sample events pre-seeded so the portal is lively on start */
+async function seed() {
+  const pwHash = await sha('password123');
+  const now = Date.now();
+  const day = 86400000;
+
+  const users = [
+    { id: 'usr-student', name: 'Aarav Sharma', email: 'student@campus.edu', role: 'student', club: '', hash: pwHash },
+    { id: 'usr-gdsc', name: 'Priya Verma', email: 'gdsc@campus.edu', role: 'organiser', club: 'Google Developer Student Club', hash: pwHash },
+    { id: 'usr-acm', name: 'Rohan Mehta', email: 'acm@campus.edu', role: 'organiser', club: 'ACM Student Chapter', hash: pwHash },
+    { id: 'usr-cultural', name: 'Ananya Iyer', email: 'cultural@campus.edu', role: 'organiser', club: 'Cultural & Dramatics Committee', hash: pwHash },
+    { id: 'usr-sports', name: 'Vikram Singh', email: 'sports@campus.edu', role: 'organiser', club: 'Campus Sports Council', hash: pwHash },
+    { id: 'usr-admin', name: 'Dr. S. K. Kulkarni', email: 'admin@campus.edu', role: 'admin', club: '', hash: pwHash }
+  ];
+
+  const events = [
+    {
+      id: 'ev-hacknova',
+      club: 'Google Developer Student Club',
+      owner: 'usr-gdsc',
+      status: 'approved',
+      created: tiso(now - day * 2),
+      title: 'HackNova 2026: 36-Hour National AI Hackathon',
+      desc: 'Join 500+ student developers across India to build transformative solutions in GenAI, HealthTech, and Sustainable Cities. Mentored by industry leads from Google, Microsoft, and top startups. Free food, swag packs, and a prize pool of ₹1,50,000!',
+      at: tiso(now + day * 3),
+      venue: 'Campus Innovation Hub, 4th Floor',
+      cap: '120',
+      cat: 'Technical'
+    },
+    {
+      id: 'ev-robosprint',
+      club: 'ACM Student Chapter',
+      owner: 'usr-acm',
+      status: 'approved',
+      created: tiso(now - day * 3),
+      title: 'RoboSprint: Autonomous Arena Challenge',
+      desc: 'Design and pit your line-following and maze-solving autonomous bots against top college teams in a high-speed obstacle course. Hardware kits provided for hands-on qualifiers.',
+      at: tiso(now + day * 5),
+      venue: 'Main Auditorium Foyer',
+      cap: '80',
+      cat: 'Competition'
+    },
+    {
+      id: 'ev-rhythm',
+      club: 'Cultural & Dramatics Committee',
+      owner: 'usr-cultural',
+      status: 'approved',
+      created: tiso(now - day * 1),
+      title: 'Rhythm & Lights: Annual Inter-College Music & Dance Night',
+      desc: 'The biggest night of the semester! Live indie bands, beatboxing showcases, classical fusion, and street dance battles under the campus amphitheater stars.',
+      at: tiso(now + day * 7),
+      venue: 'Open Air Amphitheater',
+      cap: '450',
+      cat: 'Cultural'
+    },
+    {
+      id: 'ev-quantum',
+      club: 'ACM Student Chapter',
+      owner: 'usr-acm',
+      status: 'approved',
+      created: tiso(now - day * 4),
+      title: 'Demystifying Quantum Computing & Qubits',
+      desc: 'An interactive workshop by Visiting Research Fellows on Quantum Algorithms, superposition, and writing your first quantum circuit using Qiskit.',
+      at: tiso(now + day * 10),
+      venue: 'Seminar Hall 204, IT Block',
+      cap: '60',
+      cat: 'Workshop'
+    },
+    {
+      id: 'ev-cricket',
+      club: 'Campus Sports Council',
+      owner: 'usr-sports',
+      status: 'approved',
+      created: tiso(now - day * 2),
+      title: 'Sangam Champions Trophy: Inter-Department Cricket Tournament',
+      desc: 'Annual departmental T10 cricket clash. 16 teams, knock-out rounds, floodlit finals, and player of the tournament awards.',
+      at: tiso(now + day * 14),
+      venue: 'University Cricket Grounds',
+      cap: '200',
+      cat: 'Sports'
+    },
+    {
+      id: 'ev-promptcraft',
+      club: 'Google Developer Student Club',
+      owner: 'usr-gdsc',
+      status: 'pending',
+      created: tiso(now - day * 0.5),
+      title: 'Prompt Engineering & Agentic AI Masterclass',
+      desc: 'Hands-on session exploring multi-agent orchestrations, system prompt hardening, and zero-shot reasoning patterns.',
+      at: tiso(now + day * 12),
+      venue: 'Lab 3, CS Department',
+      cap: '50',
+      cat: 'Workshop'
+    }
+  ];
+
+  const regs = [
+    { id: nid(), event_id: 'ev-hacknova', user_id: 'usr-student', name: 'Aarav Sharma', year: 'TE', branch: 'CSE-DS', created: tiso(now - day * 1) },
+    { id: nid(), event_id: 'ev-hacknova', user_id: 'usr-acm', name: 'Rohan Mehta', year: 'TE', branch: 'IT', created: tiso(now - day * 1.5) },
+    { id: nid(), event_id: 'ev-rhythm', user_id: 'usr-student', name: 'Aarav Sharma', year: 'TE', branch: 'CSE-DS', created: tiso(now - day * 0.8) }
+  ];
+
+  const notes = [
+    { id: nid(), user_id: 'usr-student', title: 'Registration Confirmed', body: 'You are registered for HackNova 2026. See you at the Innovation Hub!', event_id: 'ev-hacknova', created: tiso(now - day * 1), read: '0' },
+    { id: nid(), user_id: 'usr-student', title: 'Pass Issued: Rhythm & Lights', body: 'Your registration for the Annual Cultural Night is active.', event_id: 'ev-rhythm', created: tiso(now - day * 0.8), read: '0' },
+    { id: nid(), user_id: 'usr-admin', title: 'New Event Awaiting Approval', body: 'Prompt Engineering Masterclass was submitted by GDSC.', event_id: 'ev-promptcraft', created: tiso(now - day * 0.5), read: '0' }
+  ];
+
+  return { users, events, regs, notes };
+}
+
+let DB = null, SID = null;
+try {
+  DB = JSON.parse(localStorage.getItem(DBK));
+  SID = localStorage.getItem(DBK + '-sid');
+} catch (e) {}
+
+const ready = (async () => {
+  if (!DB || !DB.events || !DB.events.length) {
+    DB = await seed();
+    // Default sign in as student for a rich starting experience
+    if (!SID) SID = 'usr-student';
+    persist();
+  }
+})();
+
+function persist() {
+  try {
+    localStorage.setItem(DBK, JSON.stringify(DB));
+    SID ? localStorage.setItem(DBK + '-sid', SID) : localStorage.removeItem(DBK + '-sid');
+  } catch (e) {}
+}
+
+const bad = m => { throw new Error(m); };
+const isPast = e => new Date(e.at) < new Date();
+const evo = (e, mine = []) => ({
+  ...e,
+  cap: e.cap ? +e.cap : null,
+  past: isPast(e),
+  count: DB.regs.filter(r => r.event_id === e.id).length,
+  registered: mine.includes(e.id)
+});
+
+const note = (uid, title, body, eid = '') => DB.notes.push({ id: nid(), user_id: uid, title, body, event_id: eid, created: tiso(new Date()), read: '0' });
+const manage = (u, e) => u && u.role === 'organiser' && u.club.toLowerCase() === e.club.toLowerCase();
+
+function evFields(d) {
+  const title = (d.title || '').trim().slice(0, 120);
+  const at = new Date(d.at);
+  if (!title) bad('Please provide an event title');
+  if (isNaN(at) || at < new Date()) bad('Pick a future date and time for the event');
+  const cap = String(d.cap || '').trim();
+  if (cap && (!/^\d+$/.test(cap) || +cap <= 0)) bad('Seat capacity must be a positive number');
+  return {
+    title,
+    desc: (d.desc || '').slice(0, 1500),
+    at: tiso(at),
+    venue: (d.venue || '').slice(0, 120),
+    cap,
+    cat: CATS.includes(d.cat) ? d.cat : 'General'
+  };
+}
+
+async function api(m, u, b = {}) {
+  await ready;
+  const cu = DB.users.find(x => x.id === SID) || null;
+  const pub = x => x && { id: x.id, name: x.name, email: x.email, role: x.role, club: x.club };
+  const need = (...r) => {
+    if (!cu) bad('Please sign in to continue');
+    if (!r.includes(cu.role)) bad("Your account doesn't have permission for this action");
+    return cu;
+  };
+
+  const out = await (async () => {
+    if (u === '/register' && m === 'POST') {
+      const email = (b.email || '').trim().toLowerCase();
+      const name = (b.name || '').trim().slice(0, 80);
+      const role = b.role;
+      let club = '';
+      if (!['student', 'organiser', 'admin'].includes(role)) bad('Choose a valid account role');
+      if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) bad('Enter your name and a valid college email');
+      if ((b.password || '').length < 6) bad('Password needs at least 6 characters');
+      if (role === 'organiser') {
+        if (b.code !== CODES.organiser) bad('Invalid organiser invite code (hint: ORG-2026)');
+        club = (b.club || '').trim().slice(0, 80);
+        if (!club) bad('Enter your club or committee name');
+      }
+      if (role === 'admin' && b.code !== CODES.admin) bad('Invalid admin invite code (hint: ADMIN-2026)');
+      if (DB.users.some(x => x.email === email)) bad('An account with this email already exists');
+      const rec = { id: nid(), name, email, role, club, hash: await sha(b.password) };
+      DB.users.push(rec);
+      SID = rec.id;
+      return { user: pub(rec) };
+    }
+
+    if (u === '/login' && m === 'POST') {
+      const rec = DB.users.find(x => x.email === (b.email || '').trim().toLowerCase());
+      if (!rec || rec.hash !== await sha(b.password || '')) bad('Invalid email or password');
+      SID = rec.id;
+      return { user: pub(rec) };
+    }
+
+    if (u === '/logout') {
+      SID = null;
+      return { ok: true };
+    }
+
+    if (u === '/me') return { user: pub(cu) };
+
+    if (u === '/events' && m === 'GET') {
+      const mine = DB.regs.filter(r => cu && r.user_id === cu.id).map(r => r.event_id);
+      return DB.events.filter(e => e.status === 'approved' && !isPast(e)).map(e => evo(e, mine));
+    }
+
+    if (u === '/events' && m === 'POST') {
+      const o = need('organiser');
+      const e = { id: nid(), club: o.club, owner: o.id, status: 'pending', created: tiso(new Date()), ...evFields(b) };
+      DB.events.push(e);
+      // Notify admins
+      DB.users.filter(u => u.role === 'admin').forEach(adm => {
+        note(adm.id, 'New Event Submission', `${e.title} was submitted by ${o.club} and is pending approval.`, e.id);
+      });
+      return e;
+    }
+
+    if (u === '/my-events') {
+      const o = need('organiser');
+      return DB.events.filter(e => manage(o, e)).map(e => evo(e));
+    }
+
+    if (u === '/my-registrations') {
+      const s = need('student');
+      const mine = DB.regs.filter(r => r.user_id === s.id).map(r => r.event_id);
+      return DB.events.filter(e => mine.includes(e.id)).map(e => evo(e, mine));
+    }
+
+    if (u === '/admin/events') {
+      need('admin');
+      return DB.events.map(e => evo(e));
+    }
+
+    if (u === '/notifications' && m === 'GET') {
+      const x = need('student', 'organiser', 'admin');
+      return DB.notes.filter(n => n.user_id === x.id).sort((a, b) => b.created.localeCompare(a.created)).slice(0, 30);
+    }
+
+    if (u === '/notifications/read') {
+      const x = need('student', 'organiser', 'admin');
+      DB.notes.forEach(n => { if (n.user_id === x.id) n.read = '1'; });
+      return { ok: true };
+    }
+
+    const mt = u.match(/^\/events\/([^/]+)(?:\/([^/]+))?$/);
+    if (mt) {
+      const [, id, sub] = mt;
+      const e = DB.events.find(x => x.id === id);
+      if (!e) bad('Event not found');
+
+      if (!sub && m === 'GET') {
+        if (e.status !== 'approved' && !(cu && (cu.role === 'admin' || manage(cu, e)))) bad('Event not found');
+        return evo(e, DB.regs.filter(r => cu && r.user_id === cu.id).map(r => r.event_id));
+      }
+
+      if (!sub && m === 'PUT') {
+        const o = need('organiser');
+        if (!manage(o, e)) bad('This event belongs to another club');
+        if (e.status === 'approved' || isPast(e)) bad("Approved events cannot be edited directly. Cancel it and post a revised event.");
+        Object.assign(e, evFields(b), { status: 'pending' });
+        return e;
+      }
+
+      if (!sub && m === 'DELETE') {
+        const o = need('organiser');
+        if (!manage(o, e)) bad('This event belongs to another club');
+        if (e.status === 'approved' && !isPast(e)) {
+          DB.regs.filter(r => r.event_id === id).forEach(r => note(r.user_id, 'Event Cancelled', `${e.title} by ${e.club} has been cancelled.`, id));
+        }
+        DB.events = DB.events.filter(x => x.id !== id);
+        DB.regs = DB.regs.filter(r => r.event_id !== id);
+        return { ok: true };
+      }
+
+      if (sub === 'decision') {
+        need('admin');
+        if (!['approved', 'rejected'].includes(b.decision) || e.status !== 'pending') bad("This event isn't pending a decision");
+        e.status = b.decision;
+        note(e.owner, 'Event ' + b.decision.toUpperCase(), `${e.title} was ${b.decision} by the administration.` + (b.decision === 'approved' ? " It is now live on Sangam." : ' Edit details and resubmit.'), id);
+        return e;
+      }
+
+      if (sub === 'register' && m === 'POST') {
+        const s = need('student');
+        if (e.status !== 'approved' || isPast(e)) bad('Registration is closed for this event');
+        if (DB.regs.some(r => r.event_id === id && r.user_id === s.id)) bad("You are already registered for this event");
+        if (e.cap && DB.regs.filter(r => r.event_id === id).length >= +e.cap) bad('This event has reached full capacity');
+        if (!(b.name && b.year && b.branch)) bad('Please fill in your name, academic year, and branch');
+        DB.regs.push({ id: nid(), event_id: id, user_id: s.id, name: b.name.slice(0, 80), year: b.year, branch: b.branch.slice(0, 40), created: tiso(new Date()) });
+        note(s.id, 'Registration Confirmed 🎉', `You are registered for ${e.title} by ${e.club}. Venue: ${e.venue || 'TBA'}`, id);
+        return { ok: true };
+      }
+
+      if (sub === 'register' && m === 'DELETE') {
+        const s = need('student');
+        DB.regs = DB.regs.filter(r => !(r.event_id === id && r.user_id === s.id));
+        return { ok: true };
+      }
+
+      if (sub === 'registrants') {
+        const o = need('organiser');
+        if (!manage(o, e)) bad('This event belongs to another club');
+        return DB.regs.filter(r => r.event_id === id).map(r => ({
+          name: r.name,
+          email: (DB.users.find(x => x.id === r.user_id) || {}).email || '',
+          year: r.year,
+          branch: r.branch,
+          registered: r.created
+        }));
+      }
+    }
+    bad('Endpoint not found');
+  })();
+
+  persist();
+  return JSON.parse(JSON.stringify(out));
+}
+
+const csvOf = (f, rows) => [f.join(','), ...rows.map(r => f.map(k => '"' + String(r[k] ?? '').replace(/"/g, '""') + '"').join(','))].join('\n');
+
+function overlay(title, body) {
+  const c = $('#csv');
+  c.innerHTML = `
+    <div style="background:var(--bg-surface);border:1px solid var(--border-glow);border-radius:20px;padding:1.5rem;max-width:780px;width:100%;max-height:85vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,0.8);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;border-bottom:1px solid var(--border-subtle);padding-bottom:0.75rem;">
+        <h3 style="font-size:1.3rem;font-weight:800;color:#fff">${title}</h3>
+        <button class="btn-ghost" style="padding:0.35rem 0.8rem;font-size:0.8rem" data-act="closecsv">✕ Close</button>
+      </div>
+      ${body}
+    </div>
+  `;
+  c.style.setProperty('display', 'grid', 'important');
+  c.classList.add('active');
+  c.hidden = false;
+}
+
+function showData() {
+  const F = { users: ['id', 'name', 'email', 'role', 'club', 'hash'], events: ['id', 'club', 'owner', 'title', 'at', 'venue', 'cap', 'cat', 'status'], registrations: null, notifications: null };
+  const R = { users: DB.users.map(u => ({ ...u, hash: u.hash.slice(0, 10) + '…' })), events: DB.events, registrations: DB.regs, notifications: DB.notes };
+  F.registrations = ['id', 'event_id', 'user_id', 'name', 'year', 'branch', 'created'];
+  F.notifications = ['id', 'user_id', 'title', 'body', 'event_id', 'created', 'read'];
+
+  overlay('Sangam System CSV Data Files', `
+    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem">Real-time tables stored in local browser state. Download or copy CSV format.</p>
+    ${Object.keys(F).map(k => `
+      <div style="margin-bottom:1.25rem">
+        <strong style="color:var(--c-lime);font-size:0.88rem;font-family:'JetBrains Mono',monospace;">📁 ${k}.csv</strong>
+        <pre style="background:rgba(10,8,18,0.9);border:1px solid var(--border-subtle);border-radius:10px;padding:0.75rem;overflow:auto;font-size:0.78rem;margin-top:0.4rem;color:#b8bfd8;font-family:'JetBrains Mono',monospace">${esc(csvOf(F[k], R[k]))}</pre>
+      </div>
+    `).join('')}
+  `);
+}
+
+function toast(m) {
+  const t = $('#toast');
+  t.innerHTML = `<span style="color:var(--c-lime)">✦</span> ${esc(m)}`;
+  t.classList.add('show');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+const store = {
+  get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+let me = null, notes = [], flt = { q: '', club: '', cat: 'All' }, events = [], tab = 'upcoming', authMode = 'in', authRole = 'student';
+
+/* ---------------- Notifications & Device Alerts ---------------- */
+async function device(title, body, tag) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (reg) return reg.showNotification(title, { body, tag, icon: 'assets/sangam-icon.png' });
+  } catch (e) {}
+  try { new Notification(title, { body, tag, icon: 'assets/sangam-icon.png' }); } catch (e) {}
+}
+
+async function enableAlerts() {
+  if (!('Notification' in window)) return toast('Browser does not support notifications');
+  const p = await Notification.requestPermission();
+  if (p === 'granted') {
+    toast('Device reminders activated');
+    device('Sangam Alerts Active', 'You will receive reminders for upcoming registered campus events.', 'welcome');
+  } else {
+    toast('Notifications were blocked. Enable in site settings.');
+  }
+  drawNav();
+}
+
+async function poll() {
+  if (!me) return;
+  try {
+    notes = await api('GET', '/notifications');
+    const seen = store.get('seen', []);
+    notes.filter(n => n.read !== '1' && !seen.includes(n.id)).forEach(n => {
+      device(n.title, n.body, n.id);
+      toast(n.title + ': ' + n.body);
+      seen.push(n.id);
+    });
+    store.set('seen', seen.slice(-200));
+    if (me.role === 'student') await checkReminders();
+  } catch (e) {}
+  drawNav();
+}
+
+async function checkReminders() {
+  const sent = store.get('rem', []), list = await api('GET', '/my-registrations');
+  list.forEach(e => {
+    const ms = new Date(e.at) - Date.now();
+    [
+      ['h1', 3600e3, `Starts within 1 Hour: ${e.title}`],
+      ['d1', 864e5, `Happening Tomorrow: ${e.title}`]
+    ].forEach(([k, w, t]) => {
+      const key = e.id + k;
+      if (ms > 0 && ms <= w && !sent.includes(key)) {
+        sent.push(key);
+        device(t, `${fmtFull(e.at)} · ${e.venue || 'Venue TBA'}`, key);
+        toast(t);
+      }
+    });
+  });
+  store.set('rem', sent.slice(-300));
+}
+
+setInterval(poll, 25000);
+
+/* ---------------- Card Candle Glow Effect (weevolveit style) ---------------- */
+function attachSpotlightListeners() {
+  const cards = $$('.event-card');
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`);
+    });
+  });
+}
+
+/* ---------------- Navigation Bar ---------------- */
+function drawNav() {
+  const h = location.hash || '#/';
+  const unread = notes.filter(n => n.read !== '1').length;
+  const badge = $('#bellBadge');
+  if (badge) {
+    badge.textContent = unread;
+    badge.hidden = unread === 0;
+  }
+
+  const L = (href, t) => `<a href="${href}" class="nav-item ${h === href ? 'on' : ''}">${t}</a>`;
+
+  $('#nav').innerHTML = 
+    L('#/', 'Explore Events') +
+    (me?.role === 'student' ? L('#/mine', 'My Registrations') : '') +
+    (me?.role === 'organiser' ? L('#/club', `My Club (${esc(me.club.split(' ')[0])})`) : '') +
+    (me?.role === 'admin' ? L('#/admin', 'Approvals Center') : '');
+
+  const userSlot = $('#userBadgeSlot');
+  if (me) {
+    userSlot.innerHTML = `
+      <div class="user-badge">
+        <span class="user-role-tag role-${me.role}">${me.role}</span>
+        <span style="font-weight:700;color:#fff">${esc(me.name.split(' ')[0])}</span>
+        <button class="btn-link" id="out" style="font-size:0.75rem;margin-left:0.2rem">Sign out</button>
+      </div>
+    `;
+  } else {
+    userSlot.innerHTML = `
+      <a href="#/login" class="btn-primary" style="padding:0.45rem 1rem;font-size:0.84rem;border-radius:var(--radius-pill)">
+        <span>Sign In</span>
+        <div class="arrow-swap"><span>→</span><span>→</span></div>
+      </a>
+    `;
+  }
+}
+
+document.addEventListener('click', async ev => {
+  const t = ev.target;
+  if (!t) return;
+  if (t.closest('#brandLink')) { location.hash = '#/'; return; }
+  if (t.closest('#out')) {
+    await api('POST', '/logout');
+    me = null;
+    notes = [];
+    const p = $('#panel');
+    if (p) p.hidden = true;
+    location.hash = '#/';
+    route();
+    return toast('Signed out successfully');
+  }
+  if (t.closest('#bell')) {
+    const p = $('#panel');
+    if (p) {
+      p.hidden = !p.hidden;
+      if (!p.hidden) drawPanel();
+    }
+    return;
+  }
+  const p = $('#panel');
+  if (p && !t.closest('#panel') && !t.closest('#bell')) {
+    p.hidden = true;
+  }
+  if (t.closest('#modalClose') || t === $('#eventModal')) {
+    closeModal();
+    return;
+  }
+  if (t === $('#csv')) {
+    const c = $('#csv');
+    if (c) {
+      c.hidden = true;
+      c.classList.remove('active');
+      c.style.setProperty('display', 'none', 'important');
+    }
+    return;
+  }
+  const a = t.closest('[data-act]');
+  if (a) act(a);
+});
+
+function drawPanel() {
+  const perm = 'Notification' in window ? Notification.permission : 'unsupported';
+  $('#panel').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-subtle);padding-bottom:0.5rem">
+      <strong style="font-size:1rem;color:#fff">Campus Notifications</strong>
+      <span style="font-size:0.75rem;color:var(--text-muted);font-family:'JetBrains Mono'">${notes.length} total</span>
+    </div>
+    ${perm === 'default' ? `
+      <div style="background:rgba(91,35,255,0.15);border:1px solid rgba(91,35,255,0.3);padding:0.6rem;border-radius:10px;font-size:0.78rem">
+        <span>Get instant event reminders even in background tabs.</span>
+        <button class="btn-chip lime" style="margin-top:0.4rem;display:block" data-act="alerts">Enable Device Alerts</button>
+      </div>
+    ` : ''}
+    <div style="max-height:55vh;overflow-y:auto;display:flex;flex-direction:column;gap:0.5rem">
+      ${notes.length ? notes.map(n => `
+        <div class="notif-item ${n.read !== '1' ? 'new' : ''}">
+          <span class="notif-title">${esc(n.title)}</span>
+          <span class="notif-body">${esc(n.body)}</span>
+          <span style="font-size:0.68rem;color:var(--text-dim);margin-top:0.2rem">${new Date(n.created).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+      `).join('') : '<p style="color:var(--text-dim);font-size:0.85rem;padding:1rem 0;text-align:center">No notifications yet.</p>'}
+    </div>
+  `;
+
+  if (notes.some(n => n.read !== '1')) {
+    api('POST', '/notifications/read').then(() => {
+      setTimeout(() => {
+        notes.forEach(n => n.read = '1');
+        drawNav();
+      }, 2000);
+    });
+  }
+}
+
+/* ---------------- Modal Controls ---------------- */
+function openModal(contentHtml) {
+  $('#modalContent').innerHTML = contentHtml;
+  const m = $('#eventModal');
+  m.style.setProperty('display', 'grid', 'important');
+  m.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  const m = $('#eventModal');
+  m.classList.remove('active');
+  m.style.setProperty('display', 'none', 'important');
+  document.body.style.overflow = '';
+}
+
+/* ---------------- Routing & Views ---------------- */
+async function route() {
+  const [, page, id] = (location.hash || '#/').slice(1).split('/');
+  const app = $('#app');
+  drawNav();
+  window.scrollTo(0, 0);
+
+  try {
+    if (!page) return home();
+    if (page === 'event') return renderEventDetailInline(id);
+    if (page === 'login') return authPage();
+    if (page === 'mine') return me?.role === 'student' ? minePage() : go('login');
+    if (page === 'club') return me?.role === 'organiser' ? clubPage() : go('login');
+    if (page === 'admin') return me?.role === 'admin' ? adminPage() : go('login');
+    home();
+  } catch (e) {
+    app.innerHTML = `<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);padding:1.5rem;border-radius:14px;color:#fca5a5"><p>${esc(e.message)}</p></div>`;
+  }
+}
+
+const go = p => { location.hash = '#/' + p; };
+window.onhashchange = route;
+
+/* ---------------- Home Page: Explore Campus Events ---------------- */
+async function home() {
+  events = await api('GET', '/events');
+  const clubs = [...new Set(events.map(e => e.club))].sort();
+
+  $('#app').innerHTML = `
+    <!-- Hero Header with Logo Banner & Gradient Title -->
+    <section class="hero-section fade-up">
+      <div style="display:flex;justify-content:center;margin-bottom:1.5rem">
+        <div style="position:relative;display:inline-flex;align-items:center;padding:0.5rem 1.25rem;background:rgba(25,20,39,0.7);border:1px solid rgba(91,35,255,0.35);border-radius:24px;box-shadow:0 12px 35px rgba(0,0,0,0.5), 0 0 30px rgba(91,35,255,0.25);backdrop-filter:blur(16px)">
+          <img src="assets/sangam-logo.jpg" alt="Sangam College Events Hub" style="height:64px;width:auto;mix-blend-mode:screen;object-fit:contain">
+        </div>
+      </div>
+      <div class="hero-pill-badge">
+        <span class="sparkle">✦</span>
+        <span>All College Clubs & Committees • One Campus Hub</span>
+      </div>
+      <h1 class="hero-title">
+        Where Every College Club Meets at <span class="gradient-text">Sangam</span>
+      </h1>
+      <p class="hero-subtitle">
+        Discover upcoming tech hackathons, cultural fests, sports leagues, and workshops. Click on any event to register instantly with your student profile.
+      </p>
+
+      <div class="hero-stats-row">
+        <div class="stat-item">
+          <span class="stat-number lime">${events.length}</span>
+          <span class="stat-label">Upcoming Events</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number blue">${clubs.length || 5}+</span>
+          <span class="stat-label">Active Campus Clubs</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number violet">${DB.regs.length}</span>
+          <span class="stat-label">Student RSVPs</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" style="color:#fff">1-Click</span>
+          <span class="stat-label">Instant Registration</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters & Search Controls -->
+    <div class="controls-panel fade-up" style="animation-delay:0.1s">
+      <div class="filter-row">
+        <div class="search-box-wrapper">
+          <span class="icon">🔍</span>
+          <input class="input-custom" id="q" placeholder="Search by title, topics, venue, or keywords..." value="${esc(flt.q)}">
+        </div>
+        <select class="select-custom" id="fc">
+          <option value="">🏛️ All Campus Clubs (${clubs.length})</option>
+          ${clubs.map(c => `<option value="${esc(c)}" ${flt.club === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+        </select>
+        <select class="select-custom" id="ft">
+          <option value="All">⚡ All Event Categories</option>
+          ${CATS.filter(c => c !== 'All').map(c => `<option value="${c}" ${flt.cat === c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+      </div>
+
+      <!-- Quick category pills -->
+      <div class="category-pills" id="catPills">
+        ${CATS.map(c => `
+          <button class="cat-pill ${flt.cat === c ? 'active' : ''}" data-act="setCat" data-cat="${c}">
+            ${c === 'All' ? '🌟 All' : c === 'Technical' ? '💻 Technical' : c === 'Workshop' ? '🛠️ Workshop' : c === 'Cultural' ? '🎭 Cultural' : c === 'Sports' ? '🏆 Sports' : c === 'Competition' ? '⚡ Competition' : c}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Events Grid Section -->
+    <div class="section-header-bar">
+      <div>
+        <div class="section-label">[ 01 // UPCOMING EVENTS ]</div>
+        <h2 class="section-title">Campus Live Schedule</h2>
+      </div>
+      <div class="event-count-badge" id="eventCountBadge">Showing ${events.length} events</div>
+    </div>
+
+    <div class="events-grid" id="grid"></div>
+  `;
+
+  renderGrid();
+  attachSpotlightListeners();
+}
+
+function renderGrid() {
+  const grid = $('#grid');
+  if (!grid) return;
+  const l = events.filter(e => 
+    (!flt.club || e.club === flt.club) &&
+    (flt.cat === 'All' || !flt.cat || e.cat === flt.cat) &&
+    (!flt.q || (e.title + e.desc + e.venue + e.club).toLowerCase().includes(flt.q.toLowerCase()))
+  ).sort((a, b) => new Date(a.at) - new Date(b.at));
+
+  const ecb = $('#eventCountBadge');
+  if (ecb) ecb.textContent = `Showing ${l.length} of ${events.length} events`;
+
+  if (!l.length) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem;background:var(--bg-card);border:1px dashed var(--border-subtle);border-radius:20px;">
+        <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem">🔍</span>
+        <h3 style="font-size:1.3rem;font-weight:700;color:#fff">No upcoming events match your filters</h3>
+        <p style="color:var(--text-muted);margin:0.5rem 0 1.25rem">Try clearing search terms or selecting another category</p>
+        <button class="btn-ghost" data-act="clearFilters">Clear All Filters</button>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = l.map((e, idx) => {
+    const isFull = e.cap && e.count >= e.cap;
+    const pct = e.cap ? Math.min(100, Math.round((e.count / e.cap) * 100)) : 0;
+    const gradient = getPosterGradient(e.club);
+
+    return `
+      <article class="event-card card-candle-glow fade-up" style="animation-delay:${idx * 0.05}s" data-act="openEventModal" data-id="${e.id}">
+        <!-- Card Poster Banner -->
+        <div class="card-poster">
+          <div class="card-poster-bg" style="background:${gradient}"></div>
+          <div class="card-poster-overlay"></div>
+          <div class="card-poster-content">
+            <span class="poster-club-pill">🏛️ ${esc(e.club)}</span>
+            <span class="category-tag">${esc(e.cat || 'Event')}</span>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+          <div class="card-date-row">
+            <span>📅 ${fmtDate(e.at)}</span>
+            <span>•</span>
+            <span>⏰ ${fmtTime(e.at)}</span>
+          </div>
+
+          <h3 class="card-title">${esc(e.title)}</h3>
+          <p class="card-desc">${esc(e.desc)}</p>
+
+          <div class="card-meta-row">
+            <span class="card-meta-item">📍 ${esc(e.venue || 'Venue TBA')}</span>
+          </div>
+
+          <!-- Capacity Meter -->
+          <div class="seat-progress-container">
+            <div class="seat-progress-header">
+              <span style="color:var(--text-dim)">
+                ${e.cap ? `${e.count} / ${e.cap} seats booked` : `${e.count} student registered`}
+              </span>
+              <span style="color:${isFull ? '#ff4757' : pct > 75 ? 'var(--c-lime)' : 'var(--c-blue)'}">
+                ${isFull ? 'Sold Out' : pct > 75 ? 'Filling Fast' : 'Seats Open'}
+              </span>
+            </div>
+            ${e.cap ? `
+              <div class="seat-progress-bar">
+                <div class="seat-progress-fill ${isFull ? 'full' : pct > 75 ? 'filling-fast' : ''}" style="width:${pct}%"></div>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Card Action Footer -->
+          <div class="card-footer-cta">
+            ${e.registered ? `
+              <span class="reg-status-pill registered">✓ You're Registered</span>
+            ` : isFull ? `
+              <span class="reg-status-pill" style="color:#fca5a5">Registration Full</span>
+            ` : `
+              <span class="reg-status-pill" style="color:var(--text-muted)">Click to Register</span>
+            `}
+            <div class="arrow-swap-cta">
+              <span>View & RSVP</span>
+              <div class="arrow-swap"><span>→</span><span>→</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+
+  attachSpotlightListeners();
+}
+
+/* Event listeners for inputs */
+document.addEventListener('input', e => {
+  if (e.target.id === 'q') { flt.q = e.target.value; renderGrid(); }
+  if (e.target.id === 'fc') { flt.club = e.target.value; renderGrid(); }
+  if (e.target.id === 'ft') { flt.cat = e.target.value; renderGrid(); updateCatPills(); }
+});
+
+function updateCatPills() {
+  $$('.cat-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === flt.cat);
+  });
+}
+
+/* ---------------- Event Detail Modal / View ---------------- */
+async function showEventModalById(id) {
+  const e = await api('GET', '/events/' + id);
+  const isFull = e.cap && e.count >= e.cap;
+  const gradient = getPosterGradient(e.club);
+
+  let ctaBox = '';
+
+  if (!me) {
+    ctaBox = `
+      <div style="background:rgba(91,35,255,0.15);border:1px solid rgba(91,35,255,0.3);border-radius:14px;padding:1.25rem;text-align:center">
+        <p style="font-weight:700;color:#fff;margin-bottom:0.75rem">Sign in with your student account to register for this event</p>
+        <button class="btn-primary" data-act="signin">
+          <span>Sign In / Create Account</span>
+          <div class="arrow-swap"><span>→</span><span>→</span></div>
+        </button>
+      </div>
+    `;
+  } else if (me.role !== 'student') {
+    ctaBox = `
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border-subtle);border-radius:14px;padding:1rem;color:var(--text-muted);font-size:0.88rem">
+        You are currently signed in as an <strong>${me.role}</strong> (${esc(me.name)}). Switch to a <strong>Student</strong> persona using the demo bar above to register.
+      </div>
+    `;
+  } else if (e.registered) {
+    ctaBox = `
+      <div style="background:rgba(228,255,48,0.12);border:1px solid rgba(228,255,48,0.35);border-radius:14px;padding:1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem">
+        <div>
+          <span style="font-size:1.1rem;font-weight:800;color:var(--c-lime);display:block">✓ You are Registered!</span>
+          <span style="font-size:0.82rem;color:#d8dbe9">A confirmation reminder is saved. See you at the event!</span>
+        </div>
+        <button class="btn-danger" data-act="unreg" data-id="${e.id}">Cancel Registration</button>
+      </div>
+    `;
+  } else if (isFull) {
+    ctaBox = `
+      <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:1.25rem;color:#fca5a5;text-align:center">
+        <strong>Registration Closed: Full Capacity</strong>
+        <p style="font-size:0.82rem;margin-top:0.25rem">All ${e.cap} seats for this club event have been claimed.</p>
+      </div>
+    `;
+  } else {
+    ctaBox = `
+      <form class="reg-form-box" id="regform" data-id="${e.id}">
+        <div>
+          <h4 style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:0.25rem">One-Click Event Registration</h4>
+          <p style="font-size:0.82rem;color:var(--text-muted)">Verify your academic details below to secure your entry pass.</p>
+        </div>
+        <input class="input-custom" name="name" required placeholder="Full Name" value="${esc(me.name)}">
+        <div class="form-grid-2">
+          <select class="select-custom" name="year" required>
+            <option value="">Select Academic Year</option>
+            <option value="FE">First Year (FE)</option>
+            <option value="SE">Second Year (SE)</option>
+            <option value="TE" selected>Third Year (TE)</option>
+            <option value="BE">Final Year (BE)</option>
+          </select>
+          <input class="input-custom" name="branch" required placeholder="Branch (e.g. CSE-DS / IT)" value="CSE-DS">
+        </div>
+        <button class="btn-primary btn-lime" style="width:100%;margin-top:0.3rem">
+          <span>Confirm My Registration</span>
+          <div class="arrow-swap"><span>→</span><span>→</span></div>
+        </button>
+        <p class="warn" id="err" style="color:#fca5a5;font-size:0.82rem;margin:0"></p>
+      </form>
+    `;
+  }
+
+  const modalHtml = `
+    <div class="modal-banner">
+      <div class="card-poster-bg" style="background:${gradient}"></div>
+      <div class="card-poster-overlay"></div>
+      <div class="card-poster-content">
+        <span class="poster-club-pill">🏛️ ${esc(e.club)}</span>
+        <span class="category-tag">${esc(e.cat || 'Event')}</span>
+      </div>
+    </div>
+    <div class="modal-content-inner">
+      <h2 class="modal-title">${esc(e.title)}</h2>
+
+      <div class="modal-info-strip">
+        <div class="info-cell">
+          <span class="lbl">Date & Time</span>
+          <span class="val blue">${fmtFull(e.at)}</span>
+        </div>
+        <div class="info-cell">
+          <span class="lbl">Location / Venue</span>
+          <span class="val">${esc(e.venue || 'Venue TBA')}</span>
+        </div>
+        <div class="info-cell">
+          <span class="lbl">Registered</span>
+          <span class="val lime">${e.count} ${e.cap ? `/ ${e.cap} seats` : 'students'}</span>
+        </div>
+      </div>
+
+      <div>
+        <h4 style="font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--c-blue);margin-bottom:0.5rem">About This Event</h4>
+        <p style="color:var(--text-main);line-height:1.65;font-size:0.95rem;white-space:pre-wrap">${esc(e.desc)}</p>
+      </div>
+
+      ${ctaBox}
+    </div>
+  `;
+
+  openModal(modalHtml);
+}
+
+/* Standalone Event detail page handler for deep-links */
+async function renderEventDetailInline(id) {
+  await showEventModalById(id);
+  location.hash = '#/';
+}
+
+/* ---------------- Student: My Registrations Page ---------------- */
+async function minePage() {
+  const l = (await api('GET', '/my-registrations')).sort((a, b) => new Date(a.at) - new Date(b.at));
+  const upcoming = l.filter(e => !e.past);
+  const past = l.filter(e => e.past);
+
+  const card = e => `
+    <div class="item-row-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap">
+        <div>
+          <span class="category-tag" style="margin-bottom:0.4rem;display:inline-block">${esc(e.cat)}</span>
+          <h4 style="font-size:1.15rem;font-weight:700;color:#fff">${esc(e.title)}</h4>
+          <p style="color:var(--text-muted);font-size:0.84rem;margin:0.25rem 0">
+            🏛️ ${esc(e.club)} · 📅 ${fmtFull(e.at)} · 📍 ${esc(e.venue || 'Venue TBA')}
+          </p>
+        </div>
+        <div>
+          ${e.past ? `
+            <span class="status-badge status-approved">Attended</span>
+          ` : `
+            <button class="btn-danger" data-act="unreg" data-id="${e.id}" data-back="1">Cancel Registration</button>
+          `}
+        </div>
+      </div>
+    </div>
+  `;
+
+  $('#app').innerHTML = `
+    <div class="fade-up" style="max-width:880px;margin:0 auto">
+      <div style="margin-bottom:1.5rem">
+        <div class="section-label">[ STUDENT DESK ]</div>
+        <h1 style="font-size:2rem;font-weight:800;letter-spacing:-0.02em">My Registered Events</h1>
+        <p style="color:var(--text-muted)">Manage your campus RSVPs and entry passes.</p>
+      </div>
+
+      <h3 style="font-size:1.15rem;font-weight:700;color:var(--c-blue);margin-bottom:1rem">Upcoming Schedule (${upcoming.length})</h3>
+      <div style="display:flex;flex-direction:column;gap:0.9rem;margin-bottom:2.5rem">
+        ${upcoming.length ? upcoming.map(card).join('') : `
+          <div style="padding:2.5rem 1rem;text-align:center;background:var(--bg-card);border:1px dashed var(--border-subtle);border-radius:18px">
+            <p style="color:var(--text-muted);margin-bottom:1rem">You haven't registered for any upcoming events yet.</p>
+            <a href="#/" class="btn-primary">Browse Campus Events</a>
+          </div>
+        `}
+      </div>
+
+      ${past.length ? `
+        <h3 style="font-size:1.15rem;font-weight:700;color:var(--text-dim);margin-bottom:1rem">Past Events Attended (${past.length})</h3>
+        <div style="display:flex;flex-direction:column;gap:0.9rem">${past.map(card).join('')}</div>
+      ` : ''}
+    </div>
+  `;
+}
+
+/* ---------------- Auth: Sign In & Registration ---------------- */
+function authPage() {
+  const isUp = authMode === 'up';
+
+  $('#app').innerHTML = `
+    <div class="fade-up" style="max-width:480px;margin:1.5rem auto 3rem;">
+      <div class="panel-card" style="border-color:var(--border-glow);box-shadow:0 16px 50px rgba(0,0,0,0.6);">
+        <div style="text-align:center">
+          <img src="assets/sangam-icon.png" alt="Sangam Emblem" style="width:58px;height:58px;border-radius:14px;margin-bottom:0.75rem;object-fit:cover;">
+          <h2 style="font-size:1.8rem">${isUp ? 'Join Sangam' : 'Sign In to Sangam'}</h2>
+          <p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.25rem">
+            ${isUp ? 'Create your campus account to register or organize' : 'Access your registered events and committee tools'}
+          </p>
+        </div>
+
+        <form class="stack" id="auth" style="display:flex;flex-direction:column;gap:1rem;margin-top:0.5rem">
+          ${isUp ? `
+            <!-- Role Selector -->
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.35rem;display:block">Account Type</label>
+              <div style="display:flex;background:rgba(10,8,18,0.8);border:1px solid var(--border-subtle);border-radius:12px;padding:3px">
+                ${['student', 'organiser', 'admin'].map(r => `
+                  <button type="button" class="btn-ghost" style="flex:1;padding:0.4rem;font-size:0.8rem;border:none;border-radius:9px;background:${authRole === r ? 'var(--c-violet)' : 'transparent'};color:${authRole === r ? '#fff' : 'var(--text-muted)'}" data-act="role" data-r="${r}">
+                    ${r === 'student' ? 'Student' : r === 'organiser' ? 'Club Lead' : 'Admin'}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Full Name</label>
+              <input class="input-custom" name="name" required placeholder="e.g. Anaya Sharma">
+            </div>
+          ` : ''}
+
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">College Email</label>
+            <input class="input-custom" name="email" type="email" required placeholder="yourname@campus.edu">
+          </div>
+
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Password</label>
+            <input class="input-custom" name="password" type="password" minlength="6" required placeholder="Minimum 6 characters">
+          </div>
+
+          ${isUp && authRole === 'organiser' ? `
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--c-lime);display:block;margin-bottom:0.3rem">Club / Committee Name</label>
+              <input class="input-custom" name="club" required placeholder="e.g. Google Developer Student Club">
+            </div>
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--c-lime);display:block;margin-bottom:0.3rem">Organiser Invite Code (Hint: ORG-2026)</label>
+              <input class="input-custom" name="code" required placeholder="ORG-2026">
+            </div>
+          ` : ''}
+
+          ${isUp && authRole === 'admin' ? `
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--c-lime);display:block;margin-bottom:0.3rem">Admin Invite Code (Hint: ADMIN-2026)</label>
+              <input class="input-custom" name="code" required placeholder="ADMIN-2026">
+            </div>
+          ` : ''}
+
+          <button class="btn-primary" style="margin-top:0.5rem">
+            <span>${isUp ? 'Create Sangam Account' : 'Sign In'}</span>
+            <div class="arrow-swap"><span>→</span><span>→</span></div>
+          </button>
+
+          <p class="warn" id="err" style="color:#fca5a5;font-size:0.82rem;margin:0"></p>
+
+          <button type="button" class="btn-link" style="text-align:center;margin-top:0.4rem" data-act="mode">
+            ${isUp ? 'Already have an account? Sign in' : 'New club or student? Create an account'}
+          </button>
+        </form>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------------- Organiser: Club Events Manager ---------------- */
+function localInput(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
+}
+
+let draft = null;
+
+async function clubPage() {
+  const all = (await api('GET', '/my-events')).sort((a, b) => new Date(b.at) - new Date(a.at));
+  const l = all.filter(e => tab === 'past' ? e.past : !e.past);
+  const d = draft || {};
+  window._my = all;
+
+  const item = e => `
+    <div class="item-row-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.75rem">
+        <div>
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem">
+            <span class="status-badge status-${e.status}">${e.status}</span>
+            <span class="category-tag">${esc(e.cat)}</span>
+          </div>
+          <h4 style="font-size:1.15rem;font-weight:700;color:#fff">${esc(e.title)}</h4>
+          <p style="color:var(--text-muted);font-size:0.82rem;margin:0.2rem 0">
+            📅 ${fmtFull(e.at)} · 📍 ${esc(e.venue || 'TBA')} · 👥 <strong>${e.count}</strong> registered ${e.cap ? `/ ${e.cap} seats` : ''}
+          </p>
+        </div>
+
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap">
+          <button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="regs" data-id="${e.id}">Attendees</button>
+          ${e.count ? `<button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="csv" data-id="${e.id}">CSV</button>` : ''}
+          ${e.past ? `
+            <button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="repost" data-id="${e.id}">Repost</button>
+          ` : e.status !== 'approved' ? `
+            <button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="edit" data-id="${e.id}">Edit</button>
+          ` : ''}
+          <button class="btn-danger" style="padding:0.35rem 0.65rem;font-size:0.78rem" data-act="del" data-id="${e.id}">
+            ${e.past ? 'Delete' : 'Cancel'}
+          </button>
+        </div>
+      </div>
+      <div id="rg-${e.id}"></div>
+    </div>
+  `;
+
+  $('#app').innerHTML = `
+    <div class="fade-up dashboard-grid">
+      <!-- Event Submission / Edit Form -->
+      <div class="panel-card">
+        <div>
+          <div class="section-label">[ CLUB PORTAL ]</div>
+          <h2>${d.editId ? '✏️ Edit Event Details' : '📢 Post a New Club Event'}</h2>
+          <p style="color:var(--text-muted);font-size:0.88rem">
+            Posting on behalf of <strong style="color:var(--c-lime)">${esc(me.club)}</strong>. Submissions go to campus admins for approval before going live.
+          </p>
+        </div>
+
+        <form class="stack" id="evform" data-id="${esc(d.editId || '')}" style="display:flex;flex-direction:column;gap:1rem">
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Event Title</label>
+            <input class="input-custom" name="title" required placeholder="e.g. Web3 Buildathon 2026" value="${esc(d.title)}">
+          </div>
+
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Description & Highlights</label>
+            <textarea class="input-custom" name="desc" rows="4" placeholder="What will students learn or experience? Include timeline, prizes, and instructions...">${esc(d.desc)}</textarea>
+          </div>
+
+          <div class="form-grid-2">
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Date & Time</label>
+              <input class="input-custom" name="at" type="datetime-local" required value="${d.at ? localInput(d.at) : ''}">
+            </div>
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Category</label>
+              <select class="select-custom" name="cat">
+                ${CATS.filter(c => c !== 'All').map(c => `<option value="${c}" ${d.cat === c ? 'selected' : ''}>${c}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Venue / Location</label>
+              <input class="input-custom" name="venue" placeholder="e.g. Seminar Hall 3 / Ground" value="${esc(d.venue)}">
+            </div>
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Seat Capacity (Optional)</label>
+              <input class="input-custom" name="cap" type="number" min="1" placeholder="Leave empty for unlimited" value="${esc(d.cap)}">
+            </div>
+          </div>
+
+          <div style="display:flex;gap:0.75rem;align-items:center;margin-top:0.5rem">
+            <button class="btn-primary btn-lime">
+              <span>${d.editId ? 'Save & Resubmit' : 'Submit for Admin Approval'}</span>
+              <div class="arrow-swap"><span>→</span><span>→</span></div>
+            </button>
+            ${d.editId ? `<button type="button" class="btn-ghost" data-act="cancelEdit">Cancel</button>` : ''}
+          </div>
+          <p class="warn" id="err" style="color:#fca5a5;font-size:0.82rem;margin:0"></p>
+        </form>
+      </div>
+
+      <!-- Club Events List -->
+      <div class="panel-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="section-label">[ CLUB ROSTER ]</div>
+            <h2>Managed Events</h2>
+          </div>
+          <div style="display:flex;background:rgba(10,8,18,0.8);border:1px solid var(--border-subtle);border-radius:10px;padding:2px">
+            <button class="btn-ghost" style="padding:0.3rem 0.75rem;font-size:0.78rem;border:none;background:${tab === 'upcoming' ? 'var(--c-violet)' : 'transparent'};color:${tab === 'upcoming' ? '#fff' : 'var(--text-muted)'}" data-act="tab" data-t="upcoming">Upcoming</button>
+            <button class="btn-ghost" style="padding:0.3rem 0.75rem;font-size:0.78rem;border:none;background:${tab === 'past' ? 'var(--c-violet)' : 'transparent'};color:${tab === 'past' ? '#fff' : 'var(--text-muted)'}" data-act="tab" data-t="past">Past</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:0.85rem">
+          ${l.length ? l.map(item).join('') : `
+            <p style="color:var(--text-dim);font-size:0.88rem;padding:2rem 0;text-align:center">
+              ${tab === 'past' ? 'No past events logged.' : 'No upcoming events yet. Fill out the form to launch one!'}
+            </p>
+          `}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------------- Admin: Approvals Center ---------------- */
+async function adminPage() {
+  const all = await api('GET', '/admin/events');
+  const pending = all.filter(e => e.status === 'pending');
+  const decided = all.filter(e => e.status !== 'pending').sort((a, b) => new Date(b.created) - new Date(a.created));
+
+  $('#app').innerHTML = `
+    <div class="fade-up dashboard-grid">
+      <!-- Pending Approvals -->
+      <div class="panel-card">
+        <div>
+          <div class="section-label">[ ADMIN QUEUE ]</div>
+          <h2>Pending Club Submissions (${pending.length})</h2>
+          <p style="color:var(--text-muted);font-size:0.88rem">Review and greenlight events submitted by campus committees.</p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          ${pending.length ? pending.map(e => `
+            <div class="item-row-card" style="border-left:3px solid var(--c-lime)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.75rem">
+                <div>
+                  <span class="poster-club-pill" style="margin-bottom:0.3rem;display:inline-flex">🏛️ ${esc(e.club)}</span>
+                  <h4 style="font-size:1.15rem;font-weight:700;color:#fff">${esc(e.title)}</h4>
+                  <p style="color:var(--text-muted);font-size:0.82rem;margin:0.25rem 0">
+                    📅 ${fmtFull(e.at)} · 📍 ${esc(e.venue || 'TBA')} · 🏷️ ${esc(e.cat)}
+                  </p>
+                  <p style="font-size:0.84rem;color:#ccd2e8;margin-top:0.4rem;line-height:1.5">${esc(e.desc)}</p>
+                </div>
+
+                <div style="display:flex;gap:0.5rem;align-items:center">
+                  <button class="btn-primary btn-lime" style="padding:0.45rem 1rem;font-size:0.82rem" data-act="dec" data-id="${e.id}" data-d="approved">
+                    ✓ Approve Live
+                  </button>
+                  <button class="btn-danger" style="padding:0.45rem 0.9rem;font-size:0.82rem" data-act="dec" data-id="${e.id}" data-d="rejected">
+                    ✕ Reject
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('') : `
+            <div style="text-align:center;padding:3rem 1rem;background:rgba(10,8,18,0.5);border-radius:14px">
+              <span style="font-size:2rem;display:block;margin-bottom:0.5rem">✨</span>
+              <p style="color:var(--text-muted)">All caught up! No pending submissions waiting for review.</p>
+            </div>
+          `}
+        </div>
+      </div>
+
+      <!-- Decided / History -->
+      <div class="panel-card">
+        <div>
+          <div class="section-label">[ AUDIT TRAIL ]</div>
+          <h2>Decision Log (${decided.length})</h2>
+          <p style="color:var(--text-muted);font-size:0.88rem">Recent moderation decisions.</p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:0.75rem">
+          ${decided.length ? decided.map(e => `
+            <div class="item-row-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem">
+                <div>
+                  <h5 style="font-size:0.95rem;font-weight:700;color:#fff">${esc(e.title)}</h5>
+                  <span style="font-size:0.75rem;color:var(--text-dim)">${esc(e.club)} · ${fmtDate(e.at)}</span>
+                </div>
+                <span class="status-badge status-${e.status}">${e.status}</span>
+              </div>
+            </div>
+          `).join('') : '<p style="color:var(--text-dim);font-size:0.85rem">No history recorded yet.</p>'}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------------- Action Dispatcher ---------------- */
+async function act(a) {
+  const d = a.dataset;
+  try {
+    if (d.act === 'alerts') return enableAlerts();
+    if (d.act === 'closecsv') { const c = $('#csv'); c.hidden = true; c.classList.remove('active'); c.style.setProperty('display', 'none', 'important'); return; }
+    if (d.act === 'data') return showData();
+    if (d.act === 'setCat') { flt.cat = d.cat; const ft = $('#ft'); if (ft) ft.value = d.cat; if ($('#grid')) renderGrid(); updateCatPills(); return; }
+    if (d.act === 'clearFilters') { flt.q = ''; flt.club = ''; flt.cat = 'All'; if ($('#q')) $('#q').value = ''; if ($('#fc')) $('#fc').value = ''; if ($('#ft')) $('#ft').value = 'All'; if ($('#grid')) renderGrid(); updateCatPills(); return; }
+    if (d.act === 'openEventModal') return showEventModalById(d.id);
+    if (d.act === 'csv') {
+      const r = await api('GET', `/events/${d.id}/registrants`);
+      return overlay('Event Registrants Roster (CSV)', `<pre style="background:rgba(10,8,18,0.9);border:1px solid var(--border-subtle);border-radius:10px;padding:0.75rem;overflow:auto;font-size:0.78rem;font-family:'JetBrains Mono',monospace">${esc(csvOf(['name', 'email', 'year', 'branch', 'registered'], r))}</pre>`);
+    }
+    if (d.act === 'quick') {
+      const r = await api('POST', '/login', { email: d.e, password: d.p });
+      me = r.user;
+      await poll();
+      location.hash = '#/' + (me.role === 'organiser' ? 'club' : me.role === 'admin' ? 'admin' : '');
+      route();
+      return toast(`Switched to persona: ${me.name} (${me.role})`);
+    }
+    if (d.act === 'reset') {
+      if (!confirm('Reset local prototype data back to fresh seeded campus events?')) return;
+      DB = await seed();
+      SID = 'usr-student';
+      persist();
+      me = (await api('GET', '/me')).user;
+      notes = [];
+      try { localStorage.removeItem('seen'); localStorage.removeItem('rem'); } catch (e) {}
+      location.hash = '#/';
+      route();
+      return toast('Database refreshed with campus events & demo accounts');
+    }
+    if (d.act === 'signin') { closeModal(); return go('login'); }
+    if (d.act === 'mode') { authMode = authMode === 'in' ? 'up' : 'in'; return authPage(); }
+    if (d.act === 'role') { authRole = d.r; return authPage(); }
+    if (d.act === 'tab') { tab = d.t; return clubPage(); }
+    if (d.act === 'unreg') {
+      await api('DELETE', `/events/${d.id}/register`);
+      toast('Registration cancelled');
+      events = await api('GET', '/events');
+      if ($('#grid')) renderGrid();
+      if (d.back) return minePage();
+      return showEventModalById(d.id);
+    }
+    if (d.act === 'dec') {
+      await api('POST', `/events/${d.id}/decision`, { decision: d.d });
+      toast(d.d === 'approved' ? '✓ Event approved! It is now live on Sangam.' : 'Event marked as rejected.');
+      return adminPage();
+    }
+    if (d.act === 'del') {
+      if (!confirm('Are you sure you want to cancel this event? Registered students will receive cancellation notifications.')) return;
+      await api('DELETE', '/events/' + d.id);
+      toast('Event removed');
+      return clubPage();
+    }
+    if (d.act === 'edit' || d.act === 'repost') {
+      const e = window._my.find(x => x.id === d.id);
+      draft = { ...e, at: d.act === 'repost' ? '' : e.at, editId: d.act === 'edit' ? e.id : '' };
+      await clubPage();
+      return window.scrollTo(0, 0);
+    }
+    if (d.act === 'cancelEdit') { draft = null; return clubPage(); }
+    if (d.act === 'regs') {
+      const box = $('#rg-' + d.id);
+      if (box.innerHTML) { box.innerHTML = ''; return; }
+      const r = await api('GET', `/events/${d.id}/registrants`);
+      box.innerHTML = r.length ? `
+        <div style="margin-top:0.75rem;padding:0.75rem;background:rgba(10,8,18,0.7);border-radius:10px;border:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:0.4rem;">
+          <strong style="font-size:0.78rem;color:var(--c-blue);text-transform:uppercase;letter-spacing:0.05em">Registrations (${r.length})</strong>
+          ${r.map(x => `<span style="font-size:0.8rem;color:var(--text-muted)">• <strong>${esc(x.name)}</strong> (${esc(x.year)}, ${esc(x.branch)}) — <span style="font-family:'JetBrains Mono'">${esc(x.email)}</span></span>`).join('')}
+        </div>
+      ` : '<p style="color:var(--text-dim);font-size:0.78rem;margin-top:0.5rem">No registrations yet.</p>';
+    }
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/* ---------------- Form Submissions ---------------- */
+document.addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const f = ev.target;
+  const d = Object.fromEntries(new FormData(f));
+  const err = $('#err');
+
+  try {
+    if (f.id === 'auth') {
+      const r = authMode === 'in' 
+        ? await api('POST', '/login', d) 
+        : await api('POST', '/register', { ...d, role: authRole });
+      me = r.user;
+      await poll();
+      toast('Welcome to Sangam, ' + me.name);
+      go(me.role === 'organiser' ? 'club' : me.role === 'admin' ? 'admin' : '');
+      if ('Notification' in window && Notification.permission === 'default') {
+        setTimeout(() => toast('Tip: Open the 🔔 bell to enable device event alerts'), 3000);
+      }
+    }
+
+    if (f.id === 'regform') {
+      await api('POST', `/events/${f.dataset.id}/register`, d);
+      const e = await api('GET', '/events/' + f.dataset.id);
+      device("You're Registered for " + e.title, `${fmtFull(e.at)} · ${e.venue || 'TBA'}`, 'reg' + e.id);
+      toast('Registration confirmed! 🎉');
+      events = await api('GET', '/events');
+      if ($('#grid')) renderGrid();
+      showEventModalById(e.id);
+      checkReminders();
+    }
+
+    if (f.id === 'evform') {
+      const body = { ...d, at: new Date(d.at).toISOString() };
+      if (f.dataset.id) {
+        await api('PUT', '/events/' + f.dataset.id, body);
+        toast('Event revised and resubmitted for admin approval.');
+      } else {
+        await api('POST', '/events', body);
+        toast('Submitted! Your event goes live once an admin approves it.');
+      }
+      draft = null;
+      await clubPage();
+    }
+  } catch (e) {
+    if (err) err.textContent = e.message;
+    else toast(e.message);
+  }
+});
+
+/* ---------------- Bootstrap ---------------- */
+(async () => {
+  try {
+    me = (await api('GET', '/me')).user;
+  } catch (e) {}
+  await route();
+  poll();
+})();
+</script>
+</body>
+</html>
