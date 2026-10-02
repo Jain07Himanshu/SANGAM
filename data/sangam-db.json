@@ -1,0 +1,62 @@
+{
+  "users": [
+    {
+      "id": "usr-student",
+      "name": "Aarav Sharma",
+      "email": "student@campus.edu",
+      "role": "student",
+      "club": "",
+      "hash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "created_at": "2026-10-02T13:54:13.585Z"
+    },
+    {
+      "id": "usr-gdsc",
+      "name": "Priya Verma",
+      "email": "gdsc@campus.edu",
+      "role": "organiser",
+      "club": "Google Developer Student Club",
+      "hash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "created_at": "2026-10-02T13:54:13.586Z"
+    },
+    {
+      "id": "usr-acm",
+      "name": "Rohan Mehta",
+      "email": "acm@campus.edu",
+      "role": "organiser",
+      "club": "ACM Student Chapter",
+      "hash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "created_at": "2026-10-02T13:54:13.586Z"
+    },
+    {
+      "id": "usr-cultural",
+      "name": "Ananya Iyer",
+      "email": "cultural@campus.edu",
+      "role": "organiser",
+      "club": "Cultural & Dramatics Committee",
+      "hash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "created_at": "2026-10-02T13:54:13.586Z"
+    },
+    {
+      "id": "usr-sports",
+      "name": "Vikram Singh",
+      "email": "sports@campus.edu",
+      "role": "organiser",
+      "club": "Campus Sports Council",
+      "hash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "created_at": "2026-10-02T13:54:13.586Z"
+    },
+    {
+      "id": "usr-admin",
+      "name": "Dr. S. K. Kulkarni",
+      "email": "admin@campus.edu",
+      "role": "admin",
+      "club": "",
+      "hash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "created_at": "2026-10-02T13:54:13.586Z"
+    }
+  ],
+  "events": [],
+  "registrations": [],
+  "notifications": [],
+  "sessions": {}
+}

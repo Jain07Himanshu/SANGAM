@@ -1393,21 +1393,21 @@ main {
 </div>
 
 <div class="site-wrapper">
-  <!-- Demo quick control bar -->
+  <!-- Live Shared Database Control Bar -->
   <div class="demo-strip" id="demo">
-    <!-- <div style="display:flex;align-items:center;gap:0.6rem;">
-      <span class="tag">⚡ Sangam Hub</span>
-      <span style="color:#d8daf0">Centralized platform for All College Clubs & Committees</span>
-    </div> -->
-    <!-- <div class="demo-accounts">
+    <div style="display:flex;align-items:center;gap:0.6rem;">
+      <span class="tag" id="dbTag">☁️ Live Database Connected</span>
+      <span style="color:#d8daf0">Shared Central Hub • All Clubs, Events & Registrations Sync Live</span>
+    </div>
+    <div class="demo-accounts">
       <span>Switch Persona:</span>
       <button class="btn-chip" data-act="quick" data-e="student@campus.edu" data-p="password123">👨‍🎓 Student</button>
       <button class="btn-chip" data-act="quick" data-e="gdsc@campus.edu" data-p="password123">🏛️ Club Organiser</button>
       <button class="btn-chip" data-act="quick" data-e="admin@campus.edu" data-p="password123">⚡ Admin</button>
-      <button class="btn-chip lime" data-act="data">📊 CSV Data</button>
-      <button class="btn-chip" data-act="reset" style="opacity:0.75">🔄 Clear All</button>
+      <button class="btn-chip lime" data-act="data">📊 CSV Database</button>
+      <button class="btn-chip" data-act="reset" style="opacity:0.75">🔄 Clear All (0)</button>
     </div>
-  </div> -->
+  </div>
 
   <!-- Floating Sticky Header (weevolveit style) -->
   <div class="header-container">
@@ -1571,7 +1571,26 @@ function evFields(d) {
   };
 }
 
+const isServerMode = location.protocol.startsWith('http');
+
 async function api(m, u, b = {}) {
+  if (isServerMode) {
+    const token = localStorage.getItem('sangam_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const opts = { method: m, headers };
+    if (m !== 'GET' && m !== 'HEAD') opts.body = JSON.stringify(b);
+
+    const res = await fetch('/api' + u, opts);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Server request failed (${res.status})`);
+    if (data.token) localStorage.setItem('sangam_token', data.token);
+    if (u === '/logout') localStorage.removeItem('sangam_token');
+    return data;
+  }
+
+  // --- Offline Prototype Fallback (file://) ---
   await ready;
   const cu = DB.users.find(x => x.id === SID) || null;
   const pub = x => x && { id: x.id, name: x.name, email: x.email, role: x.role, club: x.club };
@@ -1752,18 +1771,42 @@ function overlay(title, body) {
   c.hidden = false;
 }
 
-function showData() {
-  const F = { users: ['id', 'name', 'email', 'role', 'club', 'hash'], events: ['id', 'club', 'owner', 'title', 'at', 'venue', 'cap', 'cat', 'status'], registrations: null, notifications: null };
-  const R = { users: DB.users.map(u => ({ ...u, hash: u.hash.slice(0, 10) + '…' })), events: DB.events, registrations: DB.regs, notifications: DB.notes };
-  F.registrations = ['id', 'event_id', 'user_id', 'name', 'year', 'branch', 'created'];
-  F.notifications = ['id', 'user_id', 'title', 'body', 'event_id', 'created', 'read'];
+async function showData() {
+  let R;
+  if (isServerMode) {
+    try {
+      const live = await api('GET', '/data');
+      R = {
+        users: (live.users || []).map(u => ({ ...u, hash: '••••••••' })),
+        events: live.events || [],
+        registrations: live.registrations || [],
+        notifications: live.notifications || []
+      };
+    } catch (e) {
+      R = { users: [], events: [], registrations: [], notifications: [] };
+    }
+  } else {
+    R = {
+      users: (DB.users || []).map(u => ({ ...u, hash: (u.hash || '').slice(0, 10) + '…' })),
+      events: DB.events || [],
+      registrations: DB.regs || [],
+      notifications: DB.notes || []
+    };
+  }
 
-  overlay('Sangam System CSV Data Files', `
-    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem">Real-time tables stored in local browser state. Download or copy CSV format.</p>
+  const F = {
+    users: ['id', 'name', 'email', 'role', 'club'],
+    events: ['id', 'club', 'owner', 'title', 'at', 'venue', 'cap', 'cat', 'status'],
+    registrations: ['id', 'event_id', 'user_id', 'name', 'year', 'branch', 'created'],
+    notifications: ['id', 'user_id', 'title', 'body', 'event_id', 'created', 'read']
+  };
+
+  overlay('Sangam Central Database Roster (CSV)', `
+    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem">Real-time database tables stored centrally on the server. Download or copy CSV format.</p>
     ${Object.keys(F).map(k => `
       <div style="margin-bottom:1.25rem">
         <strong style="color:var(--c-lime);font-size:0.88rem;font-family:'JetBrains Mono',monospace;">📁 ${k}.csv</strong>
-        <pre style="background:rgba(10,8,18,0.9);border:1px solid var(--border-subtle);border-radius:10px;padding:0.75rem;overflow:auto;font-size:0.78rem;margin-top:0.4rem;color:#b8bfd8;font-family:'JetBrains Mono',monospace">${esc(csvOf(F[k], R[k]))}</pre>
+        <pre style="background:rgba(10,8,18,0.9);border:1px solid var(--border-subtle);border-radius:10px;padding:0.75rem;overflow:auto;font-size:0.78rem;margin-top:0.4rem;color:#b8bfd8;font-family:'JetBrains Mono',monospace">${esc(csvOf(F[k], R[k] || []))}</pre>
       </div>
     `).join('')}
   `);
@@ -2044,7 +2087,7 @@ async function home() {
           <span class="stat-label">Active Campus Clubs</span>
         </div>
         <div class="stat-item">
-          <span class="stat-number violet">${(DB?.regs || []).length}</span>
+          <span class="stat-number violet">${events.reduce((sum, e) => sum + (e.count || 0), 0)}</span>
           <span class="stat-label">Student RSVPs</span>
         </div>
         <div class="stat-item">
@@ -2696,12 +2739,16 @@ async function act(a) {
     }
     if (d.act === 'reset') {
       if (!confirm('Clear all events and reset data to a clean fresh state (0 events)?')) return;
-      DB = await seed();
-      SID = null;
-      persist();
+      if (isServerMode) {
+        await api('POST', '/reset');
+      } else {
+        DB = await seed();
+        SID = null;
+        persist();
+      }
       me = null;
       notes = [];
-      try { localStorage.removeItem('seen'); localStorage.removeItem('rem'); } catch (e) {}
+      try { localStorage.removeItem('sangam_token'); localStorage.removeItem('seen'); localStorage.removeItem('rem'); } catch (e) {}
       location.hash = '#/';
       route();
       return toast('All events cleared. Starting fresh with 0 events.');
