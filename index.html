@@ -1481,7 +1481,7 @@ function getPosterGradient(clubName) {
 }
 
 /* ---------------- Database & Persistence (Prototype) ---------------- */
-const DBK = 'sangam-proto-v4';
+const DBK = 'sangam-clean-v1';
 const CODES = { organiser: 'ORG-2026', admin: 'ADMIN-2026' };
 const nid = () => Math.random().toString(16).slice(2, 12).padEnd(10, '0');
 const tiso = d => new Date(d).toISOString().replace(/\.\d+Z$/, 'Z');
@@ -1499,11 +1499,9 @@ const sha = async str => {
   return (h >>> 0).toString(16).padStart(8, '0');
 };
 
-/* Rich sample events pre-seeded so the portal is lively on start */
+/* Empty starting data with 0 events, 0 registrations, 0 notifications */
 async function seed() {
   const pwHash = await sha('password123');
-  const now = Date.now();
-  const day = 86400000;
 
   const users = [
     { id: 'usr-student', name: 'Aarav Sharma', email: 'student@campus.edu', role: 'student', club: '', hash: pwHash },
@@ -1514,98 +1512,9 @@ async function seed() {
     { id: 'usr-admin', name: 'Dr. S. K. Kulkarni', email: 'admin@campus.edu', role: 'admin', club: '', hash: pwHash }
   ];
 
-  const events = [
-    {
-      id: 'ev-hacknova',
-      club: 'Google Developer Student Club',
-      owner: 'usr-gdsc',
-      status: 'approved',
-      created: tiso(now - day * 2),
-      title: 'HackNova 2026: 36-Hour National AI Hackathon',
-      desc: 'Join 500+ student developers across India to build transformative solutions in GenAI, HealthTech, and Sustainable Cities. Mentored by industry leads from Google, Microsoft, and top startups. Free food, swag packs, and a prize pool of ₹1,50,000!',
-      at: tiso(now + day * 3),
-      venue: 'Campus Innovation Hub, 4th Floor',
-      cap: '120',
-      cat: 'Technical'
-    },
-    {
-      id: 'ev-robosprint',
-      club: 'ACM Student Chapter',
-      owner: 'usr-acm',
-      status: 'approved',
-      created: tiso(now - day * 3),
-      title: 'RoboSprint: Autonomous Arena Challenge',
-      desc: 'Design and pit your line-following and maze-solving autonomous bots against top college teams in a high-speed obstacle course. Hardware kits provided for hands-on qualifiers.',
-      at: tiso(now + day * 5),
-      venue: 'Main Auditorium Foyer',
-      cap: '80',
-      cat: 'Competition'
-    },
-    {
-      id: 'ev-rhythm',
-      club: 'Cultural & Dramatics Committee',
-      owner: 'usr-cultural',
-      status: 'approved',
-      created: tiso(now - day * 1),
-      title: 'Rhythm & Lights: Annual Inter-College Music & Dance Night',
-      desc: 'The biggest night of the semester! Live indie bands, beatboxing showcases, classical fusion, and street dance battles under the campus amphitheater stars.',
-      at: tiso(now + day * 7),
-      venue: 'Open Air Amphitheater',
-      cap: '450',
-      cat: 'Cultural'
-    },
-    {
-      id: 'ev-quantum',
-      club: 'ACM Student Chapter',
-      owner: 'usr-acm',
-      status: 'approved',
-      created: tiso(now - day * 4),
-      title: 'Demystifying Quantum Computing & Qubits',
-      desc: 'An interactive workshop by Visiting Research Fellows on Quantum Algorithms, superposition, and writing your first quantum circuit using Qiskit.',
-      at: tiso(now + day * 10),
-      venue: 'Seminar Hall 204, IT Block',
-      cap: '60',
-      cat: 'Workshop'
-    },
-    {
-      id: 'ev-cricket',
-      club: 'Campus Sports Council',
-      owner: 'usr-sports',
-      status: 'approved',
-      created: tiso(now - day * 2),
-      title: 'Sangam Champions Trophy: Inter-Department Cricket Tournament',
-      desc: 'Annual departmental T10 cricket clash. 16 teams, knock-out rounds, floodlit finals, and player of the tournament awards.',
-      at: tiso(now + day * 14),
-      venue: 'University Cricket Grounds',
-      cap: '200',
-      cat: 'Sports'
-    },
-    {
-      id: 'ev-promptcraft',
-      club: 'Google Developer Student Club',
-      owner: 'usr-gdsc',
-      status: 'pending',
-      created: tiso(now - day * 0.5),
-      title: 'Prompt Engineering & Agentic AI Masterclass',
-      desc: 'Hands-on session exploring multi-agent orchestrations, system prompt hardening, and zero-shot reasoning patterns.',
-      at: tiso(now + day * 12),
-      venue: 'Lab 3, CS Department',
-      cap: '50',
-      cat: 'Workshop'
-    }
-  ];
-
-  const regs = [
-    { id: nid(), event_id: 'ev-hacknova', user_id: 'usr-student', name: 'Aarav Sharma', year: 'TE', branch: 'CSE-DS', created: tiso(now - day * 1) },
-    { id: nid(), event_id: 'ev-hacknova', user_id: 'usr-acm', name: 'Rohan Mehta', year: 'TE', branch: 'IT', created: tiso(now - day * 1.5) },
-    { id: nid(), event_id: 'ev-rhythm', user_id: 'usr-student', name: 'Aarav Sharma', year: 'TE', branch: 'CSE-DS', created: tiso(now - day * 0.8) }
-  ];
-
-  const notes = [
-    { id: nid(), user_id: 'usr-student', title: 'Registration Confirmed', body: 'You are registered for HackNova 2026. See you at the Innovation Hub!', event_id: 'ev-hacknova', created: tiso(now - day * 1), read: '0' },
-    { id: nid(), user_id: 'usr-student', title: 'Pass Issued: Rhythm & Lights', body: 'Your registration for the Annual Cultural Night is active.', event_id: 'ev-rhythm', created: tiso(now - day * 0.8), read: '0' },
-    { id: nid(), user_id: 'usr-admin', title: 'New Event Awaiting Approval', body: 'Prompt Engineering Masterclass was submitted by GDSC.', event_id: 'ev-promptcraft', created: tiso(now - day * 0.5), read: '0' }
-  ];
+  const events = [];
+  const regs = [];
+  const notes = [];
 
   return { users, events, regs, notes };
 }
@@ -1617,10 +1526,9 @@ try {
 } catch (e) {}
 
 const ready = (async () => {
-  if (!DB || !DB.events || !DB.events.length) {
+  if (!DB || !DB.users || !Array.isArray(DB.events)) {
     DB = await seed();
-    // Default sign in as student for a rich starting experience
-    if (!SID) SID = 'usr-student';
+    SID = null;
     persist();
   }
 })();
@@ -2131,11 +2039,11 @@ async function home() {
           <span class="stat-label">Upcoming Events</span>
         </div>
         <div class="stat-item">
-          <span class="stat-number blue">${clubs.length || 5}+</span>
+          <span class="stat-number blue">${clubs.length}</span>
           <span class="stat-label">Active Campus Clubs</span>
         </div>
         <div class="stat-item">
-          <span class="stat-number violet">${DB.regs.length}</span>
+          <span class="stat-number violet">${(DB?.regs || []).length}</span>
           <span class="stat-label">Student RSVPs</span>
         </div>
         <div class="stat-item">
@@ -2201,6 +2109,24 @@ function renderGrid() {
   if (ecb) ecb.textContent = `Showing ${l.length} of ${events.length} events`;
 
   if (!l.length) {
+    if (!events.length) {
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:4.5rem 1.5rem;background:var(--bg-card);border:1px dashed var(--border-subtle);border-radius:24px;">
+          <span style="font-size:2.8rem;display:block;margin-bottom:0.75rem">📅</span>
+          <h3 style="font-size:1.35rem;font-weight:800;color:#fff">No Upcoming Events Right Now</h3>
+          <p style="color:var(--text-muted);margin:0.5rem auto 1.5rem;max-width:520px;font-size:0.92rem;line-height:1.6">
+            All college clubs and committees are currently preparing their upcoming schedules. Club organisers can sign in to post new events, which will go live once approved by campus admins!
+          </p>
+          <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
+            <a href="#/login" class="btn-primary">
+              <span>Post an Event as Club Organiser</span>
+              <div class="arrow-swap"><span>→</span><span>→</span></div>
+            </a>
+          </div>
+        </div>
+      `;
+      return;
+    }
     grid.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem;background:var(--bg-card);border:1px dashed var(--border-subtle);border-radius:20px;">
         <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem">🔍</span>
@@ -2768,16 +2694,16 @@ async function act(a) {
       return toast(`Switched to persona: ${me.name} (${me.role})`);
     }
     if (d.act === 'reset') {
-      if (!confirm('Reset local prototype data back to fresh seeded campus events?')) return;
+      if (!confirm('Clear all events and reset data to a clean fresh state (0 events)?')) return;
       DB = await seed();
-      SID = 'usr-student';
+      SID = null;
       persist();
-      me = (await api('GET', '/me')).user;
+      me = null;
       notes = [];
       try { localStorage.removeItem('seen'); localStorage.removeItem('rem'); } catch (e) {}
       location.hash = '#/';
       route();
-      return toast('Database refreshed with campus events & demo accounts');
+      return toast('All events cleared. Starting fresh with 0 events.');
     }
     if (d.act === 'signin') { closeModal(); return go('login'); }
     if (d.act === 'mode') { authMode = authMode === 'in' ? 'up' : 'in'; return authPage(); }
