@@ -368,7 +368,7 @@ app.post('/api/events', requireAuth('organiser'), (req, res) => {
 
 // GET /api/my-events - Organiser's managed events
 app.get('/api/my-events', requireAuth('organiser'), (req, res) => {
-  const clubName = req.user.club.toLowerCase();
+  const clubName = (req.user.club || '').toLowerCase();
   const myEvents = db.events
     .filter(e => (e.club || '').toLowerCase() === clubName)
     .sort((a, b) => new Date(b.created || 0).getTime() - new Date(a.created || 0).getTime())

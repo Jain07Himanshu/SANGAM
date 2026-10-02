@@ -148,17 +148,16 @@ body {
 }
 
 /* Demo Control Bar */
-/*
 .demo-strip {
-  background: linear-gradient(90deg, #1d182e 0%, var(--c-plum) 50%, #1d182e 100%);
-  border-bottom: 1px solid rgba(228, 255, 48, 0.2);
-  padding: 0.45rem 1rem;
+  background: linear-gradient(90deg, #171324 0%, #291e3e 50%, #171324 100%);
+  border-bottom: 1px solid rgba(91, 35, 255, 0.25);
+  padding: 0.5rem 1.25rem;
   font-size: 0.8rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.6rem;
+  gap: 0.75rem;
   z-index: 60;
   position: relative;
 }
@@ -166,40 +165,46 @@ body {
 .demo-strip .tag {
   background: var(--c-lime);
   color: #0b0914;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   font-size: 0.68rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
   letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: 0 0 10px rgba(228, 255, 48, 0.35);
 }
 
 .demo-accounts {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .demo-accounts span {
-  color: var(--text-muted);
+  color: var(--text-dim);
   font-size: 0.78rem;
+  font-weight: 600;
   margin-right: 0.2rem;
 }
 
 .btn-chip {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: var(--text-main);
-  padding: 0.22rem 0.6rem;
+  padding: 0.28rem 0.7rem;
   border-radius: var(--radius-pill);
-  font-size: 0.75rem;
+  font-size: 0.76rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.35rem;
+  font-family: inherit;
 }
 
 .btn-chip:hover {
@@ -207,15 +212,19 @@ body {
   border-color: var(--c-violet);
   color: #fff;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(91, 35, 255, 0.4);
 }
 
 .btn-chip.lime {
   border-color: rgba(228, 255, 48, 0.4);
+  color: var(--c-lime);
 }
 .btn-chip.lime:hover {
   background: var(--c-lime);
   color: #0d0b14;
-} */
+  border-color: var(--c-lime);
+  box-shadow: 0 4px 14px rgba(228, 255, 48, 0.4);
+}
 
 /* Floating Glass Header (weevolveit style) */
 .header-container {
@@ -345,6 +354,28 @@ body {
   align-items: center;
   gap: 0.6rem;
   flex-shrink: 0;
+}
+
+@media(max-width: 820px) {
+  .header-bar {
+    flex-wrap: wrap;
+    padding: 0.6rem 0.9rem;
+    border-radius: 18px;
+    gap: 0.6rem;
+  }
+  .nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 0.5rem;
+    gap: 0.3rem;
+    overflow-x: auto;
+  }
+  .nav-item {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+  }
 }
 
 /* Bell button with pulse badge */
@@ -563,8 +594,8 @@ main {
 
 .input-custom {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
-  background: rgba(10, 8, 18, 0.8);
+  padding: 0.75rem 1rem;
+  background: rgba(10, 8, 18, 0.85);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   color: var(--text-main);
@@ -572,12 +603,23 @@ main {
   font-family: inherit;
   transition: all 0.2s ease;
   outline: none;
+  color-scheme: dark;
+}
+
+.search-box-wrapper .input-custom {
+  padding-left: 2.75rem;
+}
+
+textarea.input-custom {
+  resize: vertical;
+  min-height: 95px;
+  line-height: 1.55;
 }
 
 .select-custom {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: rgba(10, 8, 18, 0.8);
+  background: rgba(10, 8, 18, 0.85);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   color: var(--text-main);
@@ -586,6 +628,7 @@ main {
   transition: all 0.2s ease;
   outline: none;
   cursor: pointer;
+  color-scheme: dark;
 }
 
 .input-custom:focus, .select-custom:focus, textarea.input-custom:focus {
@@ -1299,63 +1342,135 @@ main {
 }
 
 /* ---------------- Dashboard Layouts (Organiser / Admin) ---------------- */
+.dashboard-header {
+  margin-bottom: 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dashboard-title-group h1 {
+  font-size: clamp(1.8rem, 3.5vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0.25rem 0 0.4rem;
+}
+
+.dashboard-meta-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.dashboard-metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: rgba(22, 17, 34, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  backdrop-filter: blur(12px);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(91, 35, 255, 0.35);
+}
+
+.metric-card .num {
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.metric-card .lbl {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1.75rem;
+  align-items: start;
+  width: 100%;
 }
 
-@media(min-width: 900px) {
+@media(min-width: 960px) {
   .dashboard-grid {
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   }
 }
 
 .panel-card {
+  min-width: 0;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-card);
-  padding: 1.6rem;
+  padding: 1.75rem;
   backdrop-filter: blur(14px);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
 }
 
 .panel-card h2 {
-  font-size: 1.45rem;
+  font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .item-row-card {
-  background: rgba(14, 11, 23, 0.7);
+  background: rgba(14, 11, 23, 0.75);
   border: 1px solid var(--border-subtle);
   border-radius: 14px;
-  padding: 1rem 1.15rem;
+  padding: 1.15rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  gap: 0.85rem;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .item-row-card:hover {
-  border-color: rgba(91, 35, 255, 0.3);
+  border-color: rgba(91, 35, 255, 0.35);
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 .status-badge {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 800;
   text-transform: uppercase;
-  padding: 0.2rem 0.6rem;
+  padding: 0.22rem 0.65rem;
   border-radius: var(--radius-pill);
   letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-.status-approved { background: rgba(228, 255, 48, 0.15); color: var(--c-lime); border: 1px solid rgba(228, 255, 48, 0.3); }
-.status-pending { background: rgba(0, 139, 255, 0.15); color: var(--c-blue); border: 1px solid rgba(0, 139, 255, 0.3); }
-.status-rejected { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+.status-approved { background: rgba(228, 255, 48, 0.15); color: var(--c-lime); border: 1px solid rgba(228, 255, 48, 0.35); }
+.status-pending { background: rgba(0, 139, 255, 0.15); color: var(--c-blue); border: 1px solid rgba(0, 139, 255, 0.35); }
+.status-rejected { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.35); }
 
 /* Stagger Animation on load */
 .fade-up {
@@ -1910,20 +2025,30 @@ function drawNav() {
     badge.hidden = unread === 0;
   }
 
-  const L = (href, t) => `<a href="${href}" class="nav-item ${h === href ? 'on' : ''}">${t}</a>`;
+  const L = (href, t, icon = '') => `<a href="${href}" class="nav-item ${h === href ? 'on' : ''}">${icon ? `<span style="font-size:0.9rem">${icon}</span>` : ''}<span>${t}</span></a>`;
 
-  $('#nav').innerHTML = 
-    L('#/', 'Explore Events') +
-    (me?.role === 'student' ? L('#/mine', 'My Registrations') : '') +
-    (me?.role === 'organiser' ? L('#/club', `My Club (${esc(me.club.split(' ')[0])})`) : '') +
-    (me?.role === 'admin' ? L('#/admin', 'Approvals Center') : '');
+  let links = L('#/', 'Explore Events', '🌟');
+
+  if (me?.role === 'organiser') {
+    const clubShort = (me.club || 'Club').split(' ')[0];
+    links += L('#/club', `Club Dashboard (${clubShort})`, '🏛️');
+  } else if (me?.role === 'admin') {
+    links += L('#/admin', 'Approvals Center', '⚡');
+  } else if (me?.role === 'student') {
+    links += L('#/mine', 'My Registrations', '🎟️');
+  } else {
+    links += `<a href="#/login" class="nav-item ${h === '#/login' ? 'on' : ''}"><span>🏛️ Club Portal</span></a>`;
+  }
+
+  $('#nav').innerHTML = links;
 
   const userSlot = $('#userBadgeSlot');
   if (me) {
+    const safeName = esc((me.name || 'User').split(' ')[0]);
     userSlot.innerHTML = `
       <div class="user-badge">
         <span class="user-role-tag role-${me.role}">${me.role}</span>
-        <span style="font-weight:700;color:#fff">${esc(me.name.split(' ')[0])}</span>
+        <span style="font-weight:700;color:#fff">${safeName}</span>
         <button class="btn-link" id="out" style="font-size:0.75rem;margin-left:0.2rem">Sign out</button>
       </div>
     `;
@@ -2056,7 +2181,13 @@ window.onhashchange = route;
 /* ---------------- Home Page: Explore Campus Events ---------------- */
 async function home() {
   events = await api('GET', '/events');
-  const clubs = [...new Set(events.map(e => e.club))].sort();
+  const defaultClubs = [
+    'Google Developer Student Club',
+    'ACM Student Chapter',
+    'Cultural & Dramatics Committee',
+    'Campus Sports Council'
+  ];
+  const clubs = [...new Set([...defaultClubs, ...events.map(e => e.club)].filter(Boolean))].sort();
 
   $('#app').innerHTML = `
     <!-- Hero Header with Logo Banner & Gradient Title -->
@@ -2527,27 +2658,47 @@ async function clubPage() {
   const d = draft || {};
   window._my = all;
 
-  const item = e => `
+  const totalEvents = all.length;
+  const liveCount = all.filter(e => e.status === 'approved' && !e.past).length;
+  const pendingCount = all.filter(e => e.status === 'pending').length;
+  const totalRsvps = all.reduce((sum, e) => sum + (e.count || 0), 0);
+
+  const item = e => {
+    const isFull = e.cap && e.count >= e.cap;
+    const pct = e.cap ? Math.min(100, Math.round((e.count / e.cap) * 100)) : 0;
+
+    return `
     <div class="item-row-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.75rem">
-        <div>
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem">
-            <span class="status-badge status-${e.status}">${e.status}</span>
-            <span class="category-tag">${esc(e.cat)}</span>
+        <div style="flex:1;min-width:240px">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem;flex-wrap:wrap">
+            <span class="status-badge status-${e.status}">
+              ${e.status === 'approved' ? '🟢 LIVE ON FEED' : e.status === 'pending' ? '🟡 PENDING APPROVAL' : '🔴 REJECTED'}
+            </span>
+            <span class="category-tag">${esc(e.cat || 'General')}</span>
           </div>
-          <h4 style="font-size:1.15rem;font-weight:700;color:#fff">${esc(e.title)}</h4>
-          <p style="color:var(--text-muted);font-size:0.82rem;margin:0.2rem 0">
-            📅 ${fmtFull(e.at)} · 📍 ${esc(e.venue || 'TBA')} · 👥 <strong>${e.count}</strong> registered ${e.cap ? `/ ${e.cap} seats` : ''}
+          <h4 style="font-size:1.15rem;font-weight:700;color:#fff;line-height:1.3">${esc(e.title)}</h4>
+          <p style="color:var(--text-muted);font-size:0.82rem;margin:0.25rem 0">
+            📅 ${fmtFull(e.at)} · 📍 ${esc(e.venue || 'Venue TBA')}
           </p>
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--text-dim);margin-top:0.35rem">
+            <span>👥 <strong>${e.count}</strong> student RSVP${e.count === 1 ? '' : 's'} ${e.cap ? `· Cap: ${e.cap}` : ''}</span>
+            ${e.cap ? `<span style="color:${isFull ? '#ff4757' : pct > 75 ? 'var(--c-lime)' : 'var(--c-blue)'}">(${pct}% booked)</span>` : ''}
+          </div>
+          ${e.cap ? `
+            <div style="width:100%;max-width:260px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:0.4rem;overflow:hidden">
+              <div style="width:${pct}%;height:100%;background:${isFull ? '#ff4757' : 'linear-gradient(90deg, var(--c-violet), var(--c-lime))'};border-radius:2px"></div>
+            </div>
+          ` : ''}
         </div>
 
         <div style="display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap">
-          <button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="regs" data-id="${e.id}">Attendees</button>
-          ${e.count ? `<button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="csv" data-id="${e.id}">CSV</button>` : ''}
+          <button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="regs" data-id="${e.id}">👥 Attendees (${e.count})</button>
+          ${e.count ? `<button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="csv" data-id="${e.id}">📥 CSV</button>` : ''}
           ${e.past ? `
-            <button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="repost" data-id="${e.id}">Repost</button>
+            <button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="repost" data-id="${e.id}">🔄 Repost</button>
           ` : e.status !== 'approved' ? `
-            <button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="edit" data-id="${e.id}">Edit</button>
+            <button class="btn-ghost" style="padding:0.35rem 0.75rem;font-size:0.78rem" data-act="edit" data-id="${e.id}">✏️ Edit</button>
           ` : ''}
           <button class="btn-danger" style="padding:0.35rem 0.65rem;font-size:0.78rem" data-act="del" data-id="${e.id}">
             ${e.past ? 'Delete' : 'Cancel'}
@@ -2556,38 +2707,73 @@ async function clubPage() {
       </div>
       <div id="rg-${e.id}"></div>
     </div>
-  `;
+  `};
 
   $('#app').innerHTML = `
-    <div class="fade-up dashboard-grid">
+    <!-- Top Dashboard Header -->
+    <div class="dashboard-header fade-up">
+      <div class="dashboard-title-group">
+        <div class="section-label">[ CAMPUS CLUB PORTAL ]</div>
+        <h1>Club Event Management Dashboard</h1>
+        <p style="color:var(--text-muted);font-size:0.92rem">
+          Manage event schedules, submit new club events, track registrations, and export attendee rosters.
+        </p>
+      </div>
+      <div class="dashboard-meta-pills">
+        <span class="poster-club-pill" style="font-size:0.85rem;padding:0.45rem 1rem">🏛️ ${esc(me?.club || 'Club Organiser')}</span>
+        <span class="status-badge status-approved" style="font-size:0.75rem;padding:0.35rem 0.75rem">Active Lead</span>
+      </div>
+    </div>
+
+    <!-- Quick Stats Metric Strip -->
+    <div class="dashboard-metrics-strip fade-up" style="animation-delay:0.05s">
+      <div class="metric-card">
+        <span class="num" style="color:var(--c-lime)">${totalEvents}</span>
+        <span class="lbl">Total Events</span>
+      </div>
+      <div class="metric-card">
+        <span class="num" style="color:var(--c-blue)">${liveCount}</span>
+        <span class="lbl">Live on Feed</span>
+      </div>
+      <div class="metric-card">
+        <span class="num" style="color:#fcd34d">${pendingCount}</span>
+        <span class="lbl">Pending Review</span>
+      </div>
+      <div class="metric-card">
+        <span class="num" style="color:var(--c-violet)">${totalRsvps}</span>
+        <span class="lbl">Student RSVPs</span>
+      </div>
+    </div>
+
+    <div class="fade-up dashboard-grid" style="animation-delay:0.1s">
       <!-- Event Submission / Edit Form -->
       <div class="panel-card">
         <div>
-          <div class="section-label">[ CLUB PORTAL ]</div>
+          <div class="section-label">[ EVENT BUILDER ]</div>
           <h2>${d.editId ? '✏️ Edit Event Details' : '📢 Post a New Club Event'}</h2>
-          <p style="color:var(--text-muted);font-size:0.88rem">
-            Posting on behalf of <strong style="color:var(--c-lime)">${esc(me.club)}</strong>. Submissions go to campus admins for approval before going live.
+          <p style="color:var(--text-muted);font-size:0.86rem;margin-top:0.25rem">
+            Posting on behalf of <strong style="color:var(--c-lime)">${esc(me?.club || 'your club')}</strong>. Submissions are verified by campus administrators before publishing.
           </p>
         </div>
 
-        <form class="stack" id="evform" data-id="${esc(d.editId || '')}" style="display:flex;flex-direction:column;gap:1rem">
+        <form class="stack" id="evform" data-id="${esc(d.editId || '')}" style="display:flex;flex-direction:column;gap:1.1rem">
           <div>
-            <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Event Title</label>
+            <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.35rem">Event Title *</label>
             <input class="input-custom" name="title" required placeholder="e.g. Web3 Buildathon 2026" value="${esc(d.title)}">
           </div>
 
           <div>
-            <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Description & Highlights</label>
-            <textarea class="input-custom" name="desc" rows="4" placeholder="What will students learn or experience? Include timeline, prizes, and instructions...">${esc(d.desc)}</textarea>
+            <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.35rem">Description & Highlights</label>
+            <textarea class="input-custom" name="desc" rows="4" placeholder="What will students learn or experience? Include timeline, prerequisites, and prizes...">${esc(d.desc)}</textarea>
           </div>
 
           <div class="form-grid-2">
             <div>
-              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Date & Time</label>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.35rem">Date & Time *</label>
               <input class="input-custom" name="at" type="datetime-local" required value="${d.at ? localInput(d.at) : ''}">
             </div>
             <div>
-              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Category</label>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.35rem">Category</label>
               <select class="select-custom" name="cat">
                 ${CATS.filter(c => c !== 'All').map(c => `<option value="${c}" ${d.cat === c ? 'selected' : ''}>${c}</option>`).join('')}
               </select>
@@ -2596,18 +2782,18 @@ async function clubPage() {
 
           <div class="form-grid-2">
             <div>
-              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Venue / Location</label>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.35rem">Venue / Campus Location</label>
               <input class="input-custom" name="venue" placeholder="e.g. Seminar Hall 3 / Ground" value="${esc(d.venue)}">
             </div>
             <div>
-              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.3rem">Seat Capacity (Optional)</label>
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:0.35rem">Seat Capacity (Optional)</label>
               <input class="input-custom" name="cap" type="number" min="1" placeholder="Leave empty for unlimited" value="${esc(d.cap)}">
             </div>
           </div>
 
-          <div style="display:flex;gap:0.75rem;align-items:center;margin-top:0.5rem">
+          <div style="display:flex;gap:0.75rem;align-items:center;margin-top:0.4rem;flex-wrap:wrap">
             <button class="btn-primary btn-lime">
-              <span>${d.editId ? 'Save & Resubmit' : 'Submit for Admin Approval'}</span>
+              <span>${d.editId ? 'Save & Resubmit' : '🚀 Submit for Admin Approval'}</span>
               <div class="arrow-swap"><span>→</span><span>→</span></div>
             </button>
             ${d.editId ? `<button type="button" class="btn-ghost" data-act="cancelEdit">Cancel</button>` : ''}
@@ -2618,22 +2804,30 @@ async function clubPage() {
 
       <!-- Club Events List -->
       <div class="panel-card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem">
           <div>
             <div class="section-label">[ CLUB ROSTER ]</div>
-            <h2>Managed Events</h2>
+            <h2>Managed Events (${l.length})</h2>
           </div>
-          <div style="display:flex;background:rgba(10,8,18,0.8);border:1px solid var(--border-subtle);border-radius:10px;padding:2px">
-            <button class="btn-ghost" style="padding:0.3rem 0.75rem;font-size:0.78rem;border:none;background:${tab === 'upcoming' ? 'var(--c-violet)' : 'transparent'};color:${tab === 'upcoming' ? '#fff' : 'var(--text-muted)'}" data-act="tab" data-t="upcoming">Upcoming</button>
-            <button class="btn-ghost" style="padding:0.3rem 0.75rem;font-size:0.78rem;border:none;background:${tab === 'past' ? 'var(--c-violet)' : 'transparent'};color:${tab === 'past' ? '#fff' : 'var(--text-muted)'}" data-act="tab" data-t="past">Past</button>
+          <div style="display:flex;background:rgba(10,8,18,0.8);border:1px solid var(--border-subtle);border-radius:12px;padding:3px">
+            <button class="btn-ghost" style="padding:0.35rem 0.85rem;font-size:0.8rem;border:none;border-radius:8px;background:${tab === 'upcoming' ? 'var(--c-violet)' : 'transparent'};color:${tab === 'upcoming' ? '#fff' : 'var(--text-muted)'}" data-act="tab" data-t="upcoming">Upcoming (${all.filter(e => !e.past).length})</button>
+            <button class="btn-ghost" style="padding:0.35rem 0.85rem;font-size:0.8rem;border:none;border-radius:8px;background:${tab === 'past' ? 'var(--c-violet)' : 'transparent'};color:${tab === 'past' ? '#fff' : 'var(--text-muted)'}" data-act="tab" data-t="past">Past (${all.filter(e => e.past).length})</button>
           </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:0.85rem">
+        <div style="display:flex;flex-direction:column;gap:0.9rem">
           ${l.length ? l.map(item).join('') : `
-            <p style="color:var(--text-dim);font-size:0.88rem;padding:2rem 0;text-align:center">
-              ${tab === 'past' ? 'No past events logged.' : 'No upcoming events yet. Fill out the form to launch one!'}
-            </p>
+            <div style="padding:3.5rem 1.5rem;text-align:center;background:rgba(10,8,18,0.5);border:1px dashed var(--border-subtle);border-radius:18px">
+              <span style="font-size:2.4rem;display:block;margin-bottom:0.6rem">📅</span>
+              <h4 style="font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:0.4rem">
+                ${tab === 'past' ? 'No Past Events Logged' : 'No Events Scheduled Yet'}
+              </h4>
+              <p style="color:var(--text-muted);font-size:0.86rem;max-width:380px;margin:0 auto 1.2rem;line-height:1.5">
+                ${tab === 'past' 
+                  ? 'Completed campus events will appear here with final attendee rosters and stats.' 
+                  : 'Fill out the event builder on the left to schedule your club\'s upcoming workshop, hackathon, or meet!'}
+              </p>
+            </div>
           `}
         </div>
       </div>
@@ -2645,45 +2839,85 @@ async function clubPage() {
 async function adminPage() {
   const all = await api('GET', '/admin/events');
   const pending = all.filter(e => e.status === 'pending');
-  const decided = all.filter(e => e.status !== 'pending').sort((a, b) => new Date(b.created) - new Date(a.created));
+  const decided = all.filter(e => e.status !== 'pending').sort((a, b) => new Date(b.created || 0) - new Date(a.created || 0));
+
+  const pendingCount = pending.length;
+  const approvedCount = decided.filter(e => e.status === 'approved').length;
+  const rejectedCount = decided.filter(e => e.status === 'rejected').length;
 
   $('#app').innerHTML = `
-    <div class="fade-up dashboard-grid">
+    <!-- Top Admin Header -->
+    <div class="dashboard-header fade-up">
+      <div class="dashboard-title-group">
+        <div class="section-label">[ CAMPUS ADMINISTRATION ]</div>
+        <h1>Event Moderation & Verification Hub</h1>
+        <p style="color:var(--text-muted);font-size:0.92rem">
+          Review submissions from all college clubs and committees before they appear on the public Sangam live schedule.
+        </p>
+      </div>
+      <div class="dashboard-meta-pills">
+        <span class="poster-club-pill" style="font-size:0.85rem;padding:0.45rem 1rem">⚡ Campus Admin Control</span>
+        <span class="status-badge status-approved" style="font-size:0.75rem;padding:0.35rem 0.75rem">Authorized</span>
+      </div>
+    </div>
+
+    <!-- Quick Stats Metric Strip -->
+    <div class="dashboard-metrics-strip fade-up" style="animation-delay:0.05s">
+      <div class="metric-card">
+        <span class="num" style="color:#fcd34d">${pendingCount}</span>
+        <span class="lbl">Pending Review</span>
+      </div>
+      <div class="metric-card">
+        <span class="num" style="color:var(--c-lime)">${approvedCount}</span>
+        <span class="lbl">Approved Live</span>
+      </div>
+      <div class="metric-card">
+        <span class="num" style="color:#fca5a5">${rejectedCount}</span>
+        <span class="lbl">Rejected</span>
+      </div>
+      <div class="metric-card">
+        <span class="num" style="color:var(--c-blue)">${all.length}</span>
+        <span class="lbl">Total Managed</span>
+      </div>
+    </div>
+
+    <div class="fade-up dashboard-grid" style="animation-delay:0.1s">
       <!-- Pending Approvals -->
       <div class="panel-card">
         <div>
-          <div class="section-label">[ ADMIN QUEUE ]</div>
+          <div class="section-label">[ MODERATION QUEUE ]</div>
           <h2>Pending Club Submissions (${pending.length})</h2>
-          <p style="color:var(--text-muted);font-size:0.88rem">Review and greenlight events submitted by campus committees.</p>
+          <p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.25rem">Review and greenlight events submitted by campus committees.</p>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:1rem">
           ${pending.length ? pending.map(e => `
             <div class="item-row-card" style="border-left:3px solid var(--c-lime)">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.75rem">
-                <div>
-                  <span class="poster-club-pill" style="margin-bottom:0.3rem;display:inline-flex">🏛️ ${esc(e.club)}</span>
-                  <h4 style="font-size:1.15rem;font-weight:700;color:#fff">${esc(e.title)}</h4>
+                <div style="flex:1;min-width:240px">
+                  <span class="poster-club-pill" style="margin-bottom:0.35rem;display:inline-flex">🏛️ ${esc(e.club)}</span>
+                  <h4 style="font-size:1.18rem;font-weight:700;color:#fff;line-height:1.3">${esc(e.title)}</h4>
                   <p style="color:var(--text-muted);font-size:0.82rem;margin:0.25rem 0">
-                    📅 ${fmtFull(e.at)} · 📍 ${esc(e.venue || 'TBA')} · 🏷️ ${esc(e.cat)}
+                    📅 ${fmtFull(e.at)} · 📍 ${esc(e.venue || 'TBA')} · 🏷️ ${esc(e.cat)} ${e.cap ? `· Cap: ${e.cap}` : ''}
                   </p>
-                  <p style="font-size:0.84rem;color:#ccd2e8;margin-top:0.4rem;line-height:1.5">${esc(e.desc)}</p>
+                  <p style="font-size:0.86rem;color:#ccd2e8;margin-top:0.5rem;line-height:1.5">${esc(e.desc)}</p>
                 </div>
 
-                <div style="display:flex;gap:0.5rem;align-items:center">
-                  <button class="btn-primary btn-lime" style="padding:0.45rem 1rem;font-size:0.82rem" data-act="dec" data-id="${e.id}" data-d="approved">
+                <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+                  <button class="btn-primary btn-lime" style="padding:0.45rem 1.1rem;font-size:0.82rem" data-act="dec" data-id="${e.id}" data-d="approved">
                     ✓ Approve Live
                   </button>
-                  <button class="btn-danger" style="padding:0.45rem 0.9rem;font-size:0.82rem" data-act="dec" data-id="${e.id}" data-d="rejected">
+                  <button class="btn-danger" style="padding:0.45rem 0.95rem;font-size:0.82rem" data-act="dec" data-id="${e.id}" data-d="rejected">
                     ✕ Reject
                   </button>
                 </div>
               </div>
             </div>
           `).join('') : `
-            <div style="text-align:center;padding:3rem 1rem;background:rgba(10,8,18,0.5);border-radius:14px">
-              <span style="font-size:2rem;display:block;margin-bottom:0.5rem">✨</span>
-              <p style="color:var(--text-muted)">All caught up! No pending submissions waiting for review.</p>
+            <div style="text-align:center;padding:3.5rem 1rem;background:rgba(10,8,18,0.5);border-radius:18px;border:1px dashed var(--border-subtle)">
+              <span style="font-size:2.2rem;display:block;margin-bottom:0.5rem">✨</span>
+              <h4 style="color:#fff;font-size:1.1rem;margin-bottom:0.25rem">All Caught Up!</h4>
+              <p style="color:var(--text-muted);font-size:0.86rem">No pending club submissions waiting for review right now.</p>
             </div>
           `}
         </div>
@@ -2694,7 +2928,7 @@ async function adminPage() {
         <div>
           <div class="section-label">[ AUDIT TRAIL ]</div>
           <h2>Decision Log (${decided.length})</h2>
-          <p style="color:var(--text-muted);font-size:0.88rem">Recent moderation decisions.</p>
+          <p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.25rem">Recent moderation decisions.</p>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:0.75rem">
@@ -2705,7 +2939,7 @@ async function adminPage() {
                   <h5 style="font-size:0.95rem;font-weight:700;color:#fff">${esc(e.title)}</h5>
                   <span style="font-size:0.75rem;color:var(--text-dim)">${esc(e.club)} · ${fmtDate(e.at)}</span>
                 </div>
-                <span class="status-badge status-${e.status}">${e.status}</span>
+                <span class="status-badge status-${e.status}">${e.status === 'approved' ? '🟢 APPROVED' : '🔴 REJECTED'}</span>
               </div>
             </div>
           `).join('') : '<p style="color:var(--text-dim);font-size:0.85rem">No history recorded yet.</p>'}
@@ -2788,11 +3022,25 @@ async function act(a) {
       if (box.innerHTML) { box.innerHTML = ''; return; }
       const r = await api('GET', `/events/${d.id}/registrants`);
       box.innerHTML = r.length ? `
-        <div style="margin-top:0.75rem;padding:0.75rem;background:rgba(10,8,18,0.7);border-radius:10px;border:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:0.4rem;">
-          <strong style="font-size:0.78rem;color:var(--c-blue);text-transform:uppercase;letter-spacing:0.05em">Registrations (${r.length})</strong>
-          ${r.map(x => `<span style="font-size:0.8rem;color:var(--text-muted)">• <strong>${esc(x.name)}</strong> (${esc(x.year)}, ${esc(x.branch)}) — <span style="font-family:'JetBrains Mono'">${esc(x.email)}</span></span>`).join('')}
+        <div style="margin-top:0.85rem;padding:0.9rem;background:rgba(10,8,18,0.85);border-radius:12px;border:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem">
+            <strong style="font-size:0.8rem;color:var(--c-lime);text-transform:uppercase;letter-spacing:0.05em">Registered Students (${r.length})</strong>
+            <button class="btn-chip lime" style="font-size:0.72rem;padding:0.15rem 0.55rem" data-act="csv" data-id="${d.id}">Export CSV</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.4rem;max-height:220px;overflow-y:auto">
+            ${r.map((x, i) => `
+              <div style="font-size:0.8rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;padding:0.35rem 0.6rem;background:rgba(255,255,255,0.03);border-radius:8px">
+                <div>
+                  <span style="color:var(--text-dim);margin-right:0.4rem">${i+1}.</span>
+                  <strong style="color:#fff">${esc(x.name)}</strong>
+                  <span style="color:var(--c-blue);font-size:0.75rem;margin-left:0.4rem">(${esc(x.year || 'FE')}, ${esc(x.branch || 'Engg')})</span>
+                </div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--text-dim)">${esc(x.email)}</span>
+              </div>
+            `).join('')}
+          </div>
         </div>
-      ` : '<p style="color:var(--text-dim);font-size:0.78rem;margin-top:0.5rem">No registrations yet.</p>';
+      ` : '<p style="color:var(--text-dim);font-size:0.82rem;margin-top:0.6rem;padding:0.6rem;background:rgba(10,8,18,0.5);border-radius:8px;text-align:center">No student registrations recorded yet for this event.</p>';
     }
   } catch (e) {
     toast(e.message);
@@ -2832,7 +3080,11 @@ document.addEventListener('submit', async ev => {
     }
 
     if (f.id === 'evform') {
-      const body = { ...d, at: new Date(d.at).toISOString() };
+      const atDate = new Date(d.at);
+      if (isNaN(atDate.getTime())) {
+        throw new Error('Please pick a valid event date and time');
+      }
+      const body = { ...d, at: atDate.toISOString() };
       if (f.dataset.id) {
         await api('PUT', '/events/' + f.dataset.id, body);
         toast('Event revised and resubmitted for admin approval.');
